@@ -1,12 +1,16 @@
 {
   "expo": {
-    "name": "Medidor-Imagenes",
+    "name": "MicroMeasure",
     "slug": "Medidor-Imagenes",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "androidStatusBar":{
+      "backgroundColor": "#34568B",
+      "barStyle": "light-content"
+    },
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",

@@ -1,13 +1,41 @@
 import React, { useState, useRef } from 'react';
-import { View, TouchableOpacity, StyleSheet, Alert, Text } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text, Modal, TouchableWithoutFeedback } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { MaterialIcons } from '@expo/vector-icons';
 import { globalStyles } from '../styles/globalStyles';
 
+const ErrorModal = ({ visible, onClose, message }) => (
+  <Modal
+    transparent
+    visible={visible}
+    animationType="fade"
+    onRequestClose={onClose}
+  >
+    <TouchableWithoutFeedback onPress={onClose}>
+      <View style={styles.modalOverlay}>
+        <TouchableWithoutFeedback>
+          <View style={styles.modalContent}>
+            <MaterialIcons name="error" size={40} color="#d32f2f" />
+            <Text style={styles.modalTitle}>Error</Text>
+            <Text style={styles.modalMessage}>{message}</Text>
+            <TouchableOpacity 
+              style={styles.modalButton} 
+              onPress={onClose}
+            >
+              <Text style={styles.modalButtonText}>Aceptar</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+    </TouchableWithoutFeedback>
+  </Modal>
+);
+
 export default function CameraScreen({ navigation }) {
-  const [facing, setFacing] = useState('back');
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   if (!permission) {
     return <View />;
@@ -26,10 +54,6 @@ export default function CameraScreen({ navigation }) {
     );
   }
 
-  const toggleCameraFacing = () => {
-    setFacing((current) => (current === 'back' ? 'front' : 'back'));
-  };
-
   const takePicture = async () => {
     if (cameraRef.current) {
       try {
@@ -37,11 +61,13 @@ export default function CameraScreen({ navigation }) {
         if (photo?.uri) {
           navigation.navigate('ImagePreview', { imageUri: photo.uri });
         } else {
-          Alert.alert('Error', 'No se pudo capturar la imagen');
+          setErrorMessage('No se pudo capturar la imagen');
+          setShowErrorModal(true);
         }
       } catch (error) {
         console.error(error);
-        Alert.alert('Error', 'Error al tomar la foto');
+        setErrorMessage('Error al tomar la foto');
+        setShowErrorModal(true);
       }
     }
   };
@@ -51,7 +77,6 @@ export default function CameraScreen({ navigation }) {
       <CameraView 
         ref={cameraRef}
         style={styles.camera} 
-        facing={facing}
       >
         <TouchableOpacity 
           style={styles.backButton}
@@ -61,23 +86,21 @@ export default function CameraScreen({ navigation }) {
         </TouchableOpacity>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            style={[globalStyles.button, styles.flipButton]}
-            onPress={toggleCameraFacing}
+            style={[globalStyles.button, styles.captureButton]}
+            onPress={takePicture}
           >
-            <MaterialIcons name="flip-camera-android" size={24} color="white" />
-            <Text style={styles.flipText}>Voltear Cámara</Text>
+            <View style={styles.captureButtonContent}>
+              <Text style={styles.captureText}>Tomar Foto</Text>
+              <MaterialIcons name="camera" size={32} color="white" />
+            </View>
           </TouchableOpacity>
-          <TouchableOpacity
-  style={[globalStyles.button, styles.captureButton]}
-  onPress={takePicture}
->
-  <View style={styles.captureButtonContent}>
-    <Text style={styles.captureText}>Tomar Foto</Text>
-    <MaterialIcons name="camera" size={32} color="white" />
-  </View>
-</TouchableOpacity>
         </View>
       </CameraView>
+      <ErrorModal
+        visible={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        message={errorMessage}
+      />
     </View>
   );
 }
@@ -106,19 +129,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 30,
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
-  flipButton: {
-    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 20,
-    borderRadius: 50,
-  },
-  flipText: {
-    marginLeft: 5,
-    color: 'white',
+    width: '100%',
   },
   captureButton: {
     borderRadius: 50,
@@ -136,4 +148,42 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
-}); 
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
+    color: '#d32f2f',
+  },
+  modalMessage: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+    color: '#666',
+  },
+  modalButton: {
+    backgroundColor: '#34568B',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+});

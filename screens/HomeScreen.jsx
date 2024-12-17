@@ -1,6 +1,6 @@
-// screens/HomeScreen.js
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { globalStyles, colors } from '../styles/globalStyles';
@@ -23,9 +23,22 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={[globalStyles.container, styles.container]}>
-      <Text style={[globalStyles.title, styles.welcomeText]}>
-        Toma o selecciona una imagen{'\n'}y comienza a medir
-      </Text>
+      <View style={styles.welcomeContainer}>
+        <MaterialCommunityIcons 
+          name="microscope" 
+          size={150} 
+          color={colors.primary} 
+        />
+        <Text style={[globalStyles.title, styles.welcomeTitle]}>
+          ¡Bienvenido a MicroMeasure!
+        </Text>
+        <Text style={styles.welcomeDescription}>
+          Tu herramienta precisa para mediciones microscópicas
+        </Text>
+        <Text style={styles.welcomeDescription}>
+          Para comenzar, selecciona una de las siguientes opciones:
+        </Text>
+      </View>
       
       <View style={styles.buttonContainer}>
         <TouchableOpacity 
@@ -52,16 +65,34 @@ const HomeScreen = ({ navigation }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  welcomeText: {
-    textAlign: 'center',
-    lineHeight: 30,
+  welcomeContainer: {
+    alignItems: 'center',
     marginBottom: 40,
+    paddingHorizontal: 20,
+  },
+  welcomeTitle: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  welcomeDescription: {
+    fontSize: 20,
+    color: colors.textGray,
+    textAlign: 'center',
+    marginBottom: 15,
+    lineHeight: 24,
+  },
+  instructions: {
+    fontSize: 14,
+    color: colors.textGray,
+    textAlign: 'center',
   },
   buttonContainer: {
     width: '100%',

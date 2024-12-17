@@ -49,6 +49,22 @@ const TUTORIAL_STEPS = [
     title: 'Reinicio y Borrado',
     description: 'Con este botón puedes reiniciar la calibración.',
     images: [require('../assets/eliminarcalibracion.png')]
+  },
+  {
+    id: 7,
+    title: 'Guardar Mediciones',
+    description: 'Si quieres hacer muchas mediciones puedes guardarlas: \n\n• Primero haz una linea de medición.\n• Una vez hecha, presiona el boton "Guardar Medición" para guardar la medición. \n • Para ver tus mediciones guardadas presiona el boton de "Ver Lista de Mediciones".',
+    images: [require('../assets/guardar.png')]
+  },
+  {
+    id: 8,
+    title: 'Lista de Mediciones',
+    description: 'En esta parte puedes ver todas tus mediciones guardadas: \n\n• Si te equivocaste en una medición, seleccionala y presiona el botón de "Borrar". \n• Puedes seleccionar varias mediciones para borrarlas. \n• Puedes borrar todas las mediciones si no tienes seleccionada ninguna con el boton de "Borrar Todas".',
+    images: [require('../assets/Lista1.png'),
+      require('../assets/Lista2.png'),
+      require('../assets/Lista3.png'),
+      require('../assets/Lista4.png')
+    ]
   }
 ];
 

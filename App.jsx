@@ -1,4 +1,4 @@
-// App.js
+
 import 'react-native-gesture-handler';
 import React from 'react';
 import { Text } from 'react-native';
@@ -12,6 +12,7 @@ import CameraScreen from './screens/CameraScreen';
 import MeasurementScreen from './screens/MeasurementScreen';
 import ImagePreviewScreen from './screens/ImagePreviewScreen'; 
 import CalibrationScreen from './screens/CalibrationScreen';
+import MeasurementHistoryScreen from './screens/ListScreen';
 import { colors } from './styles/globalStyles';
 
 const Tab = createBottomTabNavigator();
@@ -23,7 +24,7 @@ function HomeStack() {
       <Stack.Screen 
         name="HomeScreen" 
         component={HomeScreen} 
-        options={{ headerShown: false, title: 'Inicio' }} 
+        options={{ headerShown: false, title: 'MicroMeasure' }} 
       />
       <Stack.Screen 
         name="Camera" 
@@ -42,6 +43,11 @@ function HomeStack() {
         name="ImagePreview" 
         component={ImagePreviewScreen}
         options={{ headerShown: false, title: 'Vista Previa' }}
+      />
+      <Stack.Screen 
+        name="MeasurementHistory" 
+        component={MeasurementHistoryScreen}
+        options={{ headerShown: false }}
       />
 
       <Stack.Screen 
@@ -102,9 +108,12 @@ export default function App() {
                 case 'Calibration':
                   title = 'Calibración';
                   break;
+                case 'MeasurementHistory':
+                  title = 'Lista de Mediciones';
+                  break;
                 case 'HomeScreen':
                 default:
-                  title = 'Inicio';
+                  title = 'MicroMeasure';
               }
               return <Text style={{ color: 'white', fontSize: 25 }}>{title}</Text>;
             },

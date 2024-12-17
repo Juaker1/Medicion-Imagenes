@@ -49,6 +49,7 @@ export default function MeasurementScreen({ route, navigation }) {
   const [calibratedScale, setCalibratedScale] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [measurements, setMeasurements] = useState([]);
 
   const screenWidth = Dimensions.get('window').width;
   const screenHeight = Dimensions.get('window').height;
@@ -190,6 +191,31 @@ export default function MeasurementScreen({ route, navigation }) {
     }, 2000);
   };
 
+  const saveMeasurement = () => {
+    if (points.length !== 2) {
+      setToastMessage("Necesitas crear una línea de medición primero");
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
+      return;
+    }
+  
+    const measurement = {
+      id: Date.now(),
+      distance: calculateRealDistance(),
+      units: calibratedScale ? 'µm' : 'unidades',
+      timestamp: new Date().toLocaleString(),
+    };
+  
+    setMeasurements(prev => [...prev, measurement]);
+    setToastMessage("Medición guardada exitosamente");
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 2000);
+  };
+
   return (
     <View style={styles.container}>
       <Toast 
@@ -282,6 +308,27 @@ export default function MeasurementScreen({ route, navigation }) {
           </Text>
         )}
       </View>
+
+      <View style={styles.bottomContainer}>
+  <TouchableOpacity
+    style={styles.saveButton}
+    onPress={saveMeasurement}
+  >
+    <MaterialIcons name="save" size={24} color="white" />
+    <Text style={styles.bottomButtonText}>Guardar Medición</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={styles.historyButton}
+    onPress={() => navigation.navigate('MeasurementHistory', { 
+      measurements: measurements, 
+      setMeasurements: setMeasurements 
+    })}
+  >
+    <MaterialIcons name="format-list-bulleted" size={24} color="white" />
+    <Text style={styles.bottomButtonText}>Ver Lista de Mediciones</Text>
+  </TouchableOpacity>
+</View>
     </View>
   );
 }
@@ -345,11 +392,12 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 80,
     left: 20,
     padding: 10,
     backgroundColor: 'rgba(0,0,0,0.6)',
     borderRadius: 5,
+    zIndex: 2, 
   },
   infoText: {
     color: 'white',
@@ -429,5 +477,33 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
     textAlign: 'center',
+  },
+
+  bottomContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 15,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 1,
+  },
+  saveButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#388e3c',
+    padding: 10,
+    borderRadius: 5,
+    gap: 8,
+  },
+  historyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#34568B',
+    padding: 10,
+    borderRadius: 5,
+    gap: 8,
+  },
+  bottomButtonText: {
+    color: 'white',
+    fontSize: 12,
   },
 });
