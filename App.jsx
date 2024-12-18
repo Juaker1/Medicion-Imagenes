@@ -115,7 +115,7 @@ export default function App() {
                 default:
                   title = 'MicroMeasure';
               }
-              return <Text style={{ color: 'white', fontSize: 25 }}>{title}</Text>;
+              return <Text style={{ color: 'white', fontSize: 20 }}>{title}</Text>;
             },
             tabBarLabel: 'Inicio'
           })}

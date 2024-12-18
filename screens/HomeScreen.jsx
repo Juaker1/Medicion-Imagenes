@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { globalStyles, colors } from '../styles/globalStyles';
+import icon from '../assets/icon.png';
 
 const HomeScreen = ({ navigation }) => {
   const pickImage = async () => {
@@ -24,10 +25,9 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={[globalStyles.container, styles.container]}>
       <View style={styles.welcomeContainer}>
-        <MaterialCommunityIcons 
-          name="microscope" 
-          size={150} 
-          color={colors.primary} 
+      <Image 
+          source={icon} 
+          style={styles.customIcon} 
         />
         <Text style={[globalStyles.title, styles.welcomeTitle]}>
           ¡Bienvenido a MicroMeasure!
@@ -74,6 +74,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 40,
     paddingHorizontal: 20,
+  },
+  customIcon: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
   },
   welcomeTitle: {
     fontSize: 32,

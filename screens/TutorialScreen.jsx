@@ -7,13 +7,13 @@ const TUTORIAL_STEPS = [
   {
     id: 1,
     title: 'Bienvenido',
-    description: 'Esta aplicación te permite realizar mediciones precisas en imágenes microscópicas. Sigue este tutorial para aprender cómo usarla. Primero selecciona una imagen o toma una foto para comenzar.',
-    images: []
+    description: 'Esta aplicación te permite realizar mediciones precisas en imágenes microscópicas. Sigue este tutorial para aprender cómo usarla. \n\n Primero selecciona una imagen o toma una foto del microscopio para comenzar. \n Asegúrate de que en la foto se vea todo el borde del lente como en la imagen.',
+    images: [require('../assets/sample.png')]
   },
   {
     id: 2,
     title: 'Colocación de Puntos',
-    description: 'Toca la pantalla para colocar puntos de medición:\n\n• Primer toque: Coloca el punto inicial\n• Segundo toque: Coloca el punto final\n• Botón "Punto 1": Modifica y reposiciona el punto1 \n• Botón "Punto 2": Modifica y reposiciona el punto 2 \n• Botón "Borrar": Elimina ambos puntos\n• Puedes hacer zoom y mover la imagen para mayor precisión',
+    description: 'Toca la pantalla para colocar puntos de medición:\n\n• Primer toque: Coloca el punto inicial\n• Segundo toque: Coloca el punto final\n• Botón "Punto 1": Modifica y reposiciona el punto 1\n• Botón "Punto 2": Modifica y reposiciona el punto 2\n• Botón "Borrar": Elimina ambos puntos\n• Puedes hacer zoom y mover la imagen para mayor precisión',
     images: [
       require('../assets/points.png'),
       require('../assets/points2.png')
@@ -21,8 +21,8 @@ const TUTORIAL_STEPS = [
   },
   {
     id: 3,
-    title: 'Calibración Automatica',
-    description: 'Antes de medir, debes calibrar, para calibrar tienes que hacer una linea de medición, con esta linea puedes elegir entre dos metodos de calibración, con la calibración automatica:\n\n• Haz una linea de medición que vaya desde cada borde del lente del microscopio, un diametro del lente.\n• Luego, puedes elegir el metodo de calibración automatica, y seleccionar el aumento de tu microscopio.\n• Cuando hayas seleccionado el aumento, presiona el boton de confirmación.\n• La calibración se mantiene para mediciones posteriores.',
+    title: 'Calibración Automática',
+    description: 'Antes de medir, debes calibrar. Para calibrar, tienes que hacer una línea de medición. Con esta línea puedes elegir entre dos métodos de calibración. \nPara la calibración automática:\n\n• Haz una línea de medición que vaya desde cada borde del lente del microscopio, un diámetro del lente.\n• Luego, puedes elegir el método de calibración automática y seleccionar el aumento de tu microscopio.\n• Cuando hayas seleccionado el aumento, presiona el botón de confirmación.\n• La calibración se mantiene para que puedas hacer la medición que quieras en la imagen.',
     images: [
       require('../assets/lineaautomatica.png'),
       require('../assets/calibracionautomatica.png')
@@ -31,7 +31,7 @@ const TUTORIAL_STEPS = [
   {
     id: 4,
     title: 'Calibración Manual',
-    description: 'Ahora para la medición manual:\n\n• Primero haz una linea de medición de una medición de la cual conozcas su distancia en la vida real.\n• Luego selecciona la calibración manual e ingresa esta distancia conocida.\n• Cuando hayas seleccionado el aumento, presiona el boton de confirmación.\n• La calibración se mantiene para mediciones posteriores.',
+    description: 'Ahora para la medición manual:\n\n• Primero haz una línea de medición de una medición de la cual conozcas su distancia en la vida real.\n• Luego selecciona la calibración manual e ingresa esta distancia conocida.\n• Cuando hayas ingresado la distancia, presiona el botón de confirmación.\n• La calibración se mantiene para que puedas hacer la medición que quieras en la imagen.',
     images: [require('../assets/lineamanual.png'),
       require('../assets/calibracionmanual.png')
     ]
@@ -39,27 +39,27 @@ const TUTORIAL_STEPS = [
   {
     id: 5,
     title: 'Visualización de Medidas',
-    description: 'Las mediciones se muestran antes y despues de la calibración:\n\n• La distancia aparece en la esquina inferior\n• Antes de calibrar, se muestra la distancia en unidades, y sin calibración\n• Luego de la calibraciíon se muestra la distancia en (µm) junto con la escala de la imagen',
+    description: 'Las mediciones se muestran antes y después de la calibración:\n\n• La distancia aparece en la esquina inferior\n• Antes de calibrar, se muestra la distancia en unidades, y sin calibración\n• Luego de la calibración se muestra la distancia en (µm) junto con la escala de la imagen',
     images: [require('../assets/distanciasincalibrar.png'),
       require('../assets/distanciacalibrada.png')
     ]
   },
   {
     id: 6,
-    title: 'Reinicio y Borrado',
+    title: 'Eliminar Calibración',
     description: 'Con este botón puedes reiniciar la calibración.',
     images: [require('../assets/eliminarcalibracion.png')]
   },
   {
     id: 7,
     title: 'Guardar Mediciones',
-    description: 'Si quieres hacer muchas mediciones puedes guardarlas: \n\n• Primero haz una linea de medición.\n• Una vez hecha, presiona el boton "Guardar Medición" para guardar la medición. \n • Para ver tus mediciones guardadas presiona el boton de "Ver Lista de Mediciones".',
+    description: 'Si quieres hacer muchas mediciones, puedes guardarlas:\n\n• Primero haz una línea de medición.\n• Una vez hecha, presiona el botón "Guardar Medición" para guardar la medición.\n• Para ver tus mediciones guardadas, presiona el botón de "Ver Lista de Mediciones".',
     images: [require('../assets/guardar.png')]
   },
   {
     id: 8,
     title: 'Lista de Mediciones',
-    description: 'En esta parte puedes ver todas tus mediciones guardadas: \n\n• Si te equivocaste en una medición, seleccionala y presiona el botón de "Borrar". \n• Puedes seleccionar varias mediciones para borrarlas. \n• Puedes borrar todas las mediciones si no tienes seleccionada ninguna con el boton de "Borrar Todas".',
+    description: 'En esta parte puedes ver todas tus mediciones guardadas:\n\n• Si te equivocaste en una medición, selecciónala y presiona el botón de "Borrar".\n• Puedes seleccionar varias mediciones para borrarlas.\n• Puedes borrar todas las mediciones si no tienes seleccionada ninguna con el botón de "Borrar Todas".',
     images: [require('../assets/Lista1.png'),
       require('../assets/Lista2.png'),
       require('../assets/Lista3.png'),
