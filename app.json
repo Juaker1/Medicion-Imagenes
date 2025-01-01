@@ -1,14 +1,18 @@
 {
   "expo": {
-    "name": "Medidor-Imagenes",
+    "name": "MicroMeasure",
     "slug": "Medidor-Imagenes",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "androidStatusBar":{
+      "backgroundColor": "#34568B",
+      "barStyle": "light-content"
+    },
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -23,7 +27,7 @@
       "package": "com.juaker.MedidorImagenes"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png"
     },
     "extra": {
       "eas": {
