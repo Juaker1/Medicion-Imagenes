@@ -1,7 +1,7 @@
 
 import 'react-native-gesture-handler';
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, Image, View } from 'react-native';
 import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -62,9 +62,45 @@ function HomeStack() {
   );
 }
 
+
+const HeaderTitle = ({ title }) => (
+  <View style={{ 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingRight: 10
+  }}>
+    <Text style={{ color: 'white', fontSize: 20 }}>{title}</Text>
+    <Image 
+      source={require('./assets/logouct_blanco.png')} 
+      style={{ width: 35, height: 35 }}
+      resizeMode="contain"
+    />
+  </View>
+);
+
+const Footer = () => (
+  <View style={{
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: colors.mainBlue,
+    paddingVertical: 5,
+  }}>
+    <Text style={{
+      fontSize: 12,
+      color: colors.softWhite,
+      fontStyle: 'italic'
+    }}>
+      Financiado por Innovación Educacional
+    </Text>
+  </View>
+);
+
 export default function App() {
   return (
     <NavigationContainer>
+      <View style={{ flex: 1 }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -115,7 +151,7 @@ export default function App() {
                 default:
                   title = 'MicroMeasure';
               }
-              return <Text style={{ color: 'white', fontSize: 20 }}>{title}</Text>;
+              return <HeaderTitle title={title} />;
             },
             tabBarLabel: 'Inicio'
           })}
@@ -123,8 +159,14 @@ export default function App() {
         <Tab.Screen 
           name="Tutorial" 
           component={TutorialScreen}
+          options={{
+            headerTitle: () => <HeaderTitle title="Tutorial" />
+          }}
         />
       </Tab.Navigator>
+      <Footer />
+      </View>
     </NavigationContainer>
+    
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -24,6 +24,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={[globalStyles.container, styles.container]}>
+      <ScrollView>
       <View style={styles.welcomeContainer}>
       <Image 
           source={icon} 
@@ -61,6 +62,7 @@ const HomeScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
     </View>
   );
 };
