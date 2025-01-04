@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Dimensions
 import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../styles/globalStyles';
 
+const { width, height } = Dimensions.get('window');
+
 const TUTORIAL_STEPS = [
   {
     id: 1,
@@ -75,11 +77,11 @@ const ImageCarousel = ({ images }) => {
 
   return (
     <View>
-      <ScrollView 
-        horizontal 
-        pagingEnabled 
+      <ScrollView
+        horizontal
+        pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onScroll={event => {
+        onScroll={(event) => {
           const slideSize = event.nativeEvent.layoutMeasurement.width;
           const index = event.nativeEvent.contentOffset.x / slideSize;
           setActiveImage(Math.round(index));
@@ -102,7 +104,7 @@ const ImageCarousel = ({ images }) => {
               key={index}
               style={[
                 styles.imageDot,
-                activeImage === index && styles.activeImageDot
+                activeImage === index && styles.activeImageDot,
               ]}
             />
           ))}
@@ -129,14 +131,14 @@ export default function TutorialScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.content}>
+      <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.stepIndicator}>
           {TUTORIAL_STEPS.map((step, index) => (
             <View
               key={step.id}
               style={[
                 styles.dot,
-                currentStep === index && styles.activeDot
+                currentStep === index && styles.activeDot,
               ]}
             />
           ))}
@@ -146,9 +148,7 @@ export default function TutorialScreen() {
           {TUTORIAL_STEPS[currentStep].title}
         </Text>
 
-        <ImageCarousel 
-        key = {currentStep}
-        images={TUTORIAL_STEPS[currentStep].images} />
+        <ImageCarousel images={TUTORIAL_STEPS[currentStep].images} />
 
         <Text style={styles.description}>
           {TUTORIAL_STEPS[currentStep].description}
@@ -157,21 +157,27 @@ export default function TutorialScreen() {
 
       <View style={styles.navigation}>
         <TouchableOpacity
-          style={[styles.navButton, currentStep === 0 && styles.disabledButton]}
+          style={[
+            styles.navButton,
+            currentStep === 0 && styles.disabledButton,
+          ]}
           onPress={goToPreviousStep}
           disabled={currentStep === 0}
         >
-          <MaterialIcons name="arrow-back" size={24} color="white" />
+          <MaterialIcons name="arrow-back" size={width * 0.06} color="white" />
           <Text style={styles.buttonText}>Anterior</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.navButton, currentStep === TUTORIAL_STEPS.length - 1 && styles.disabledButton]}
+          style={[
+            styles.navButton,
+            currentStep === TUTORIAL_STEPS.length - 1 && styles.disabledButton,
+          ]}
           onPress={goToNextStep}
           disabled={currentStep === TUTORIAL_STEPS.length - 1}
         >
           <Text style={styles.buttonText}>Siguiente</Text>
-          <MaterialIcons name="arrow-forward" size={24} color="white" />
+          <MaterialIcons name="arrow-forward" size={width * 0.06} color="white" />
         </TouchableOpacity>
       </View>
     </View>
@@ -184,78 +190,78 @@ const styles = StyleSheet.create({
     backgroundColor: colors.softWhite,
   },
   content: {
-    flex: 1,
-    padding: 20,
+    flexGrow: 1,
+    padding: width * 0.05,
   },
   stepIndicator: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: height * 0.01,
   },
   dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: width * 0.02,
+    height: width * 0.02,
+    borderRadius: width * 0.1,
     backgroundColor: colors.lightGray,
-    marginHorizontal: 5,
+    marginHorizontal: width * 0.01,
   },
   activeDot: {
     backgroundColor: colors.mainBlue,
-    width: 12,
-    height: 12,
+    width: width * 0.04,
+    height: width * 0.025,
   },
   stepTitle: {
-    fontSize: 24,
+    fontSize: width * 0.08,
     fontWeight: 'bold',
     color: colors.navy,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: height * 0.01,
   },
   carouselImage: {
-    width: Dimensions.get('window').width - 40,
-    height: 200,
+    width: width * 0.9,
+    height: height * 0.25,
   },
   imageDots: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: height * 0.01,
   },
   imageDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: width * 0.02,
+    height: width * 0.02,
+    borderRadius: width * 0.1,
     backgroundColor: colors.lightGray,
-    marginHorizontal: 4,
+    marginHorizontal: width * 0.01,
   },
   activeImageDot: {
     backgroundColor: colors.mainBlue,
-    width: 10,
-    height: 10,
+    width: width * 0.04,
+    height: width * 0.025,
   },
   description: {
-    fontSize: 16,
+    fontSize: width * 0.043,
     color: colors.navy,
-    lineHeight: 24,
+    lineHeight: width * 0.06,
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: height * 0.01,
   },
   navigation: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 20,
+    padding: width * 0.03,
     backgroundColor: colors.softWhite,
-    borderTopWidth: 1,
+    borderTopWidth: width * 0.0012,
     borderTopColor: colors.lightGray,
   },
   navButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.mainBlue,
-    padding: 10,
-    borderRadius: 5,
-    minWidth: 120,
+    padding: height * 0.01,
+    borderRadius: width * 0.015,
+    minWidth: width * 0.2,
     justifyContent: 'center',
   },
   disabledButton: {
@@ -263,6 +269,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    marginHorizontal: 5,
+    marginHorizontal: width * 0.02,
+    fontSize: width * 0.045,
   },
 });

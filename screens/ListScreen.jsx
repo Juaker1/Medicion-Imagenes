@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TouchableWithoutFeedback, Dimensions} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+
+const { width, height } = Dimensions.get('window');
 
 const DeleteModal = ({ visible, onClose, onConfirm, message }) => (
     <Modal
@@ -13,7 +15,7 @@ const DeleteModal = ({ visible, onClose, onConfirm, message }) => (
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
-              <MaterialIcons name="warning" size={40} color="#FFA000" />
+              <MaterialIcons name="warning" size={width * 0.2} color="#FFA000" />
               <Text style={styles.modalTitle}>Borrar mediciones</Text>
               <Text style={styles.modalMessage}>{message}</Text>
               <View style={styles.modalButtons}>
@@ -79,7 +81,7 @@ export default function MeasurementHistoryScreen({ route, navigation }) {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <MaterialIcons name="arrow-back" size={32} color="black" />
+          <MaterialIcons name="arrow-back" size={width * 0.08} color="black" />
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -89,7 +91,7 @@ export default function MeasurementHistoryScreen({ route, navigation }) {
           onPress={handleClearAll}
           disabled={localMeasurements.length === 0}
         >
-          <MaterialIcons name="delete-sweep" size={24} color="white" />
+          <MaterialIcons name="delete-sweep" size={width * 0.06} color="white" />
           <Text style={styles.deleteText}>
             {selectedMeasures.length > 0 
               ? `Borrar (${selectedMeasures.length})`
@@ -147,42 +149,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 15,
+    padding: width * 0.03,
     backgroundColor: 'rgba(0,0,0,0)',
   },
   backButton: {
-    padding: 5,
-  },
-  clearButton: {
-    padding: 5,
-
-  },
-  title: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
+    padding: width * 0.002,
   },
   scrollView: {
     flex: 1,
-    padding: 15,
+    padding: width * 0.03,
   },
   measurementCard: {
     backgroundColor: '#34568B',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
+    padding: width * 0.04,
+    borderRadius: width * 0.02,
+    marginBottom: height * 0.01,
   },
   selectedCard: {
     backgroundColor: '#d32f2f',
   },
   measurementText: {
     color: 'white',
-    fontSize: 16,
-    marginBottom: 5,
+    fontSize: width * 0.05,
+    marginBottom: height * 0.003,
   },
   timestampText: {
     color: '#cccccc',
-    fontSize: 12,
+    fontSize: width * 0.04,
   },
   emptyContainer: {
     flex: 1,
@@ -191,20 +184,20 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: '#cccccc',
-    fontSize: 16,
+    fontSize: width * 0.05,
   },
   deleteContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#d32f2f',
-    padding: 10,
-    borderRadius: 5,
-    gap: 8,
+    padding: width * 0.025,
+    borderRadius: width * 0.02,
+    gap: width * 0.02,
   },
   deleteText: {
     color: 'white',
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: width * 0.04,
+    fontWeight: '700',
   },
   disabledButton: {
     opacity: 0.5,
@@ -217,21 +210,21 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    width: '80%',
+    borderRadius: width * 0.02,
+    padding: width * 0.05,
+    width: width * 0.8,
     alignItems: 'center',
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: width * 0.07,
     fontWeight: 'bold',
-    marginVertical: 10,
+    marginVertical: height * 0.01,
     color: '#34568B',
   },
   modalMessage: {
-    fontSize: 16,
+    fontSize: width * 0.05,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: height * 0.025,
     color: '#666',
   },
   modalButtons: {
@@ -240,22 +233,22 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   modalButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    minWidth: 100,
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.05,
+    borderRadius: width * 0.02,
+    minWidth: width * 0.25,
     alignItems: 'center',
   },
   cancelButton: {
     backgroundColor: '#9e9e9e',
-    marginRight: 10,
+    marginRight: width * 0.025,
   },
   deleteButton: {
     backgroundColor: '#d32f2f',
   },
   modalButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: width * 0.05,
     fontWeight: '500',
   },
 });

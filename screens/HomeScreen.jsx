@@ -1,15 +1,16 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { globalStyles, colors } from '../styles/globalStyles';
 import icon from '../assets/icon.png';
 
+const { width, height } = Dimensions.get('window');
+
 const HomeScreen = ({ navigation }) => {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
+
     if (status === 'granted') {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
@@ -24,44 +25,41 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={[globalStyles.container, styles.container]}>
-      <ScrollView>
-      <View style={styles.welcomeContainer}>
-      <Image 
-          source={icon} 
-          style={styles.customIcon} 
-        />
-        <Text style={[globalStyles.title, styles.welcomeTitle]}>
-          ¡Bienvenido a MicroMeasure!
-        </Text>
-        <Text style={styles.welcomeDescription}>
-          Tu herramienta precisa para mediciones microscópicas
-        </Text>
-        <Text style={styles.welcomeDescription}>
-          Para comenzar, selecciona una de las siguientes opciones:
-        </Text>
-      </View>
-      
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity 
-          style={[globalStyles.button, styles.button]} 
-          onPress={() => navigation.navigate('Camera')}
-        >
-          <Ionicons name="camera" size={24} color={colors.softWhite} />
-          <Text style={[globalStyles.buttonText, styles.buttonText]}>
-            Tomar Foto
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.welcomeContainer}>
+          <Image source={icon} style={styles.customIcon} />
+          <Text style={[globalStyles.title, styles.welcomeTitle]}>
+            ¡Bienvenido a MicroMeasure!
           </Text>
-        </TouchableOpacity>
+          <Text style={styles.welcomeDescription}>
+            Tu herramienta precisa para mediciones microscópicas
+          </Text>
+          <Text style={styles.welcomeDescription}>
+            Para comenzar, selecciona una de las siguientes opciones:
+          </Text>
+        </View>
 
-        <TouchableOpacity 
-          style={[globalStyles.button, styles.button]} 
-          onPress={pickImage}
-        >
-          <Ionicons name="images" size={24} color={colors.softWhite} />
-          <Text style={[globalStyles.buttonText, styles.buttonText]}>
-            Seleccionar Imagen
-          </Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[globalStyles.button, styles.button]}
+            onPress={() => navigation.navigate('Camera')}
+          >
+            <Ionicons name="camera" size={width * 0.06} color={colors.softWhite} />
+            <Text style={[globalStyles.buttonText, styles.buttonText]}>
+              Tomar Foto
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[globalStyles.button, styles.button]}
+            onPress={pickImage}
+          >
+            <Ionicons name="images" size={width * 0.06} color={colors.softWhite} />
+            <Text style={[globalStyles.buttonText, styles.buttonText]}>
+              Seleccionar Imagen
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </View>
   );
@@ -72,50 +70,51 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  scrollContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    paddingVertical: height * 0.02,
+  },
   welcomeContainer: {
     alignItems: 'center',
-    marginBottom: 40,
-    paddingHorizontal: 20,
+    marginBottom: height * 0.05,
+    paddingHorizontal: width * 0.05,
   },
   customIcon: {
-    width: 200,
-    height: 200,
+    width: width * 0.5, 
+    height: width * 0.5, 
     resizeMode: 'contain',
   },
   welcomeTitle: {
-    fontSize: 32,
+    fontSize: width * 0.1, 
     fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 15,
+    marginTop: height * 0.01,
+    marginBottom: height * 0.025,
     textAlign: 'center',
   },
   welcomeDescription: {
-    fontSize: 20,
+    fontSize: width * 0.045,
     color: colors.textGray,
     textAlign: 'center',
-    marginBottom: 15,
-    lineHeight: 24,
-  },
-  instructions: {
-    fontSize: 14,
-    color: colors.textGray,
-    textAlign: 'center',
+    marginBottom: height * 0.015,
+    lineHeight: width * 0.055,
   },
   buttonContainer: {
     width: '100%',
-    paddingHorizontal: 20,
+    paddingHorizontal: width * 0.04,
   },
   button: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
-    paddingVertical: 15,
+    marginVertical: height * 0.015,
+    paddingVertical: height * 0.02,
     width: '100%',
   },
   buttonText: {
-    marginLeft: 10,
-  }
+    marginLeft: width * 0.02,
+    fontSize: width * 0.045, // Scale text in buttons
+  },
 });
 
 export default HomeScreen;

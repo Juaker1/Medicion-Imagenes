@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Dimensions } from 'react-native';
 import { globalStyles, colors } from '../styles/globalStyles';
 import	{	MaterialIcons	}	from	'@expo/vector-icons';
+
+const { width, height } = Dimensions.get('window');
 
 const MICROSCOPE_SCALES = [
   { label: '4x objetivo - 10x ocular', value: 4500 },
@@ -35,7 +37,7 @@ export default function CalibrationScreen({ route, navigation }) {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <MaterialIcons name="arrow-back" size={32} color={colors.navy} />
+          <MaterialIcons name="arrow-back" size={width * 0.08} color={colors.navy} />
         </TouchableOpacity>
         <Text style={styles.title}>Seleccione el método de calibración</Text>
       </View>
@@ -117,34 +119,34 @@ export default function CalibrationScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: width * 0.03,
     backgroundColor: colors.softWhite,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: height * 0.03,
   },
   backButton: {
-    padding: 5,
-    marginRight: 10,
+    padding: width * 0.002,
+    marginRight: width * 0.055,
   },
   title: {
     flex: 1,
-    fontSize: 20,
+    fontSize: width * 0.06,
     fontWeight: 'bold',
     textAlign: 'center',
     color: colors.navy,
-    marginRight: 47,
+    marginRight: width * 0.12,
   },
   methodContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 20,
+    marginBottom: height * 0.01,
   },
   methodButton: {
-    padding: 15,
-    borderRadius: 10,
+    padding: width * 0.037,
+    borderRadius: width * 0.02,
     backgroundColor: colors.lightGray,
     width: '45%',
   },
@@ -154,48 +156,48 @@ const styles = StyleSheet.create({
   methodText: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 16,
+    fontSize: width * 0.045,
   },
   manualInput: {
-    marginVertical: 20,
+    marginVertical: height * 0.02,
   },
   label: {
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: width * 0.05,
+    marginBottom: height * 0.015,
   },
   input: {
-    borderWidth: 1,
+    borderWidth: height * 0.0015,
     borderColor: colors.lightGray,
-    borderRadius: 5,
-    padding: 10,
-    fontSize: 16,
+    borderRadius: width * 0.02,
+    padding: width * 0.025,
+    fontSize: width * 0.05,
   },
   scalesContainer: {
-    marginVertical: 20,
+    marginVertical: height * 0.02,
   },
   scaleButton: {
-    padding: 15,
-    borderRadius: 10,
+    padding: width * 0.037,
+    borderRadius: width * 0.02,
     backgroundColor: colors.lightGray,
-    marginBottom: 10,
+    marginBottom: height * 0.015,
   },
   selectedScale: {
     backgroundColor: colors.mainBlue,
   },
   scaleText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: width * 0.05,
   },
   scaleValue: {
     color: 'white',
-    fontSize: 14,
-    marginTop: 5,
+    fontSize: width * 0.04,
+    marginTop: height * 0.004,
   },
   confirmButton: {
     backgroundColor: colors.mainBlue,
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 20,
+    padding: width * 0.037,
+    borderRadius: width * 0.02,
+    marginTop: height * 0.01,
   },
   disabledButton: {
     opacity: 0.5,
@@ -203,7 +205,6 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     color: 'white',
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: width * 0.05,
   },
-  
 });

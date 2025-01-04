@@ -18,6 +18,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Line } from 'react-native-svg';
 
+const { width, height } = Dimensions.get('window');
+
 const Toast = ({ message, isVisible }) => {
   const opacity = useSharedValue(0);
 
@@ -227,7 +229,7 @@ export default function MeasurementScreen({ route, navigation }) {
           style={styles.backButton}
           onPress={() => navigation.navigate('HomeScreen')}
         >
-          <MaterialIcons name="arrow-back" size={32} color="white" />
+          <MaterialIcons name="arrow-back" size={width * 0.08} color="white" />
         </TouchableOpacity>
         
         <View style={styles.pointButtonsContainer}>
@@ -248,7 +250,7 @@ export default function MeasurementScreen({ route, navigation }) {
             onPress={clearPoints}
             disabled={points.length === 0}
           >
-            <MaterialIcons name="delete" size={24} color="white" />
+            <MaterialIcons name="delete" size={width * 0.055} color="white" />
           </TouchableOpacity>
         </View>
         
@@ -258,7 +260,7 @@ export default function MeasurementScreen({ route, navigation }) {
               style={styles.resetCalibrationButton}
               onPress={resetCalibration}
             >
-              <MaterialIcons name="straighten" size={24} color="white" />
+              <MaterialIcons name="straighten" size={width * 0.055} color="white" />
             </TouchableOpacity>
           )}
           <TouchableOpacity
@@ -314,7 +316,7 @@ export default function MeasurementScreen({ route, navigation }) {
     style={styles.saveButton}
     onPress={saveMeasurement}
   >
-    <MaterialIcons name="save" size={24} color="white" />
+    <MaterialIcons name="save" size={width * 0.05} color="white" />
     <Text style={styles.bottomButtonText}>Guardar Medición</Text>
   </TouchableOpacity>
 
@@ -325,7 +327,7 @@ export default function MeasurementScreen({ route, navigation }) {
       setMeasurements: setMeasurements 
     })}
   >
-    <MaterialIcons name="format-list-bulleted" size={24} color="white" />
+    <MaterialIcons name="format-list-bulleted" size={width * 0.05} color="white" />
     <Text style={styles.bottomButtonText}>Ver Lista de Mediciones</Text>
   </TouchableOpacity>
 </View>
@@ -333,6 +335,7 @@ export default function MeasurementScreen({ route, navigation }) {
   );
 }
 
+// Example responsive component
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -342,81 +345,71 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    padding: width * 0.02,
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   backButton: {
-    padding: 5,
+    padding: width * 0.002,
   },
   pointButtonsContainer: {
     flexDirection: 'row',
-    gap: 10,
+    gap: width * 0.02,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   deleteButton: {
     backgroundColor: '#d32f2f',
-    padding: 7,
-    borderRadius: 5,
+    padding: width * 0.018,
+    borderRadius: width * 0.02,
   },
   disabledButton: {
     opacity: 0.5,
   },
   pointButton: {
     backgroundColor: '#34568B',
-    padding: 10,
-    borderRadius: 5,
-    minWidth: 80,
+    padding: width * 0.027,
+    borderRadius: width * 0.02,
+    minWidth: width * 0.1,
+  },
+  pointButtonText: {
+    color: 'white',
+    fontSize: width * 0.035,
   },
   calibrationContainer: {
     flexDirection: 'row',
-    gap: 10,
+    gap: width * 0.025,
     alignItems: 'center',
   },
   resetCalibrationButton: {
     backgroundColor: '#FFA000',
-    padding: 7,
-    borderRadius: 5,
+    padding: width * 0.018,
+    borderRadius: width * 0.02,
   },
   calibrateButton: {
     backgroundColor: '#388e3c',
-    padding: 10,
-    borderRadius: 5,
-    minWidth: 100,
+    padding: width * 0.027,
+    borderRadius: width * 0.02,
+    minWidth: width * 0.1,
   },
   calibrateButtonText: {
     color: 'white',
-    fontSize: 14,
+    fontSize: width * 0.035,
     textAlign: 'center',
   },
   infoContainer: {
     position: 'absolute',
-    bottom: 80,
-    left: 20,
-    padding: 10,
+    bottom: height * 0.09,
+    left: width * 0.02,
+    padding: width * 0.025,
     backgroundColor: 'rgba(0,0,0,0.6)',
-    borderRadius: 5,
-    zIndex: 2, 
+    borderRadius: width * 0.02,
+    zIndex: 2,
   },
   infoText: {
     color: 'white',
-    fontSize: 16,
-    marginVertical: 2,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
-  },
-  pointButton: {
-    padding: 10,
-    backgroundColor: '#34568B',
-    borderRadius: 5,
-  },
-  pointButtonText: {
-    color: 'white',
-    fontSize: 14,
+    fontSize: width * 0.035,
+    marginVertical: height * 0.001,
   },
   imageContainer: {
     flex: 1,
@@ -427,62 +420,48 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   pointContainer: {
-    position: 'absolute',
-    width: 12,
-    height: 12,
+    width: width * 0.03,
+    height: width * 0.026,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,
   },
   point: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    borderWidth: 2,
+    width: width * 0.03,
+    height: width * 0.03,
+    borderRadius: width * 0.02,
+    borderWidth: width * 0.003,
     borderColor: 'white',
     backgroundColor: 'red',
     opacity: 0.4,
   },
   pointCenter: {
     position: 'absolute',
-    width: 2,
-    height: 2,
+    width: width * 0.006,
+    height: width * 0.006,
     backgroundColor: 'white',
-    borderRadius: 1,
-  },
-  distanceContainer: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    padding: 10,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    borderRadius: 5,
-  },
-  distanceText: {
-    color: 'white',
-    fontSize: 16,
+    borderRadius: width * 0.2,
   },
   toast: {
     position: 'absolute',
-    top: 90,
-    left: 20,
-    right: 20,
+    top: height * 0.08,
+    left: width * 0.05,
+    right: width * 0.05,
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    padding: 15,
-    borderRadius: 8,
+    padding: width * 0.03,
+    borderRadius: width * 0.02,
     zIndex: 1000,
     alignItems: 'center',
   },
   toastText: {
     color: 'white',
-    fontSize: 14,
+    fontSize: width * 0.04,
     textAlign: 'center',
   },
-
   bottomContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: 15,
+    padding: width * 0.02,
     backgroundColor: 'rgba(0,0,0,0.5)',
     zIndex: 1,
   },
@@ -490,20 +469,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#388e3c',
-    padding: 10,
-    borderRadius: 5,
-    gap: 8,
+    padding: width * 0.022,
+    borderRadius: width * 0.02,
+    gap: width * 0.01,
   },
   historyButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#34568B',
-    padding: 10,
-    borderRadius: 5,
-    gap: 8,
+    padding: width * 0.022,
+    borderRadius: width * 0.02,
+    gap: width * 0.01,
   },
   bottomButtonText: {
     color: 'white',
-    fontSize: 12,
+    fontSize: width * 0.035,
   },
 });

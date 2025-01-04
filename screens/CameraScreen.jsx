@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { View, TouchableOpacity, StyleSheet, Text, Modal, TouchableWithoutFeedback } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text, Modal, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { MaterialIcons } from '@expo/vector-icons';
 import { globalStyles } from '../styles/globalStyles';
+
+const { width, height } = Dimensions.get('window');
 
 const ErrorModal = ({ visible, onClose, message }) => (
   <Modal
@@ -15,7 +17,7 @@ const ErrorModal = ({ visible, onClose, message }) => (
       <View style={styles.modalOverlay}>
         <TouchableWithoutFeedback>
           <View style={styles.modalContent}>
-            <MaterialIcons name="error" size={40} color="#d32f2f" />
+            <MaterialIcons name="error" size={width * 0.2} color="#d32f2f" />
             <Text style={styles.modalTitle}>Error</Text>
             <Text style={styles.modalMessage}>{message}</Text>
             <TouchableOpacity 
@@ -82,7 +84,7 @@ export default function CameraScreen({ navigation }) {
           style={styles.backButton}
           onPress={() => navigation.navigate('HomeScreen')}
         >
-          <MaterialIcons name="arrow-back" size={32} color="white" />
+          <MaterialIcons name="arrow-back" size={width * 0.08} color="white" />
         </TouchableOpacity>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
@@ -91,7 +93,7 @@ export default function CameraScreen({ navigation }) {
           >
             <View style={styles.captureButtonContent}>
               <Text style={styles.captureText}>Tomar Foto</Text>
-              <MaterialIcons name="camera" size={32} color="white" />
+              <MaterialIcons name="camera" size={width * 0.08} color="white" />
             </View>
           </TouchableOpacity>
         </View>
@@ -113,28 +115,30 @@ const styles = StyleSheet.create({
   permissionText: {
     textAlign: 'center',
     color: 'white',
-    marginBottom: 20,
+    marginTop: height * 0.03,
+    marginBottom: height * 0.03,
+    fontSize: width * 0.05,
   },
   camera: {
     flex: 1,
   },
   backButton: {
     position: 'absolute',
-    top: 10,
-    left: 5,
+    top: height * 0.02,
+    left: width * 0.02,
     zIndex: 2,
-    padding: 10,
+    padding: width * 0.01,
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 30,
+    bottom: height * 0.0001,
     flexDirection: 'row',
     justifyContent: 'center',
     width: '100%',
   },
   captureButton: {
-    borderRadius: 50,
-    padding: 20,
+    borderRadius: width * 0.02,
+    padding: width * 0.04,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -142,11 +146,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
+    gap: width * 0.01,
   },
   captureText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: width * 0.05,
   },
   modalOverlay: {
     flex: 1,
@@ -156,34 +160,34 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    width: '80%',
+    borderRadius: width * 0.025,
+    padding: width * 0.05,
+    width: width * 0.8,
     alignItems: 'center',
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: width * 0.05,
     fontWeight: 'bold',
-    marginVertical: 10,
+    marginVertical: height * 0.012,
     color: '#d32f2f',
   },
   modalMessage: {
-    fontSize: 16,
+    fontSize: width * 0.04,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: height * 0.025,
     color: '#666',
   },
   modalButton: {
     backgroundColor: '#34568B',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    minWidth: 100,
+    paddingVertical: height * 0.012,
+    paddingHorizontal: width * 0.05,
+    borderRadius: width * 0.012,
+    minWidth: width * 0.25,
     alignItems: 'center',
   },
   modalButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: width * 0.04,
     fontWeight: '500',
   },
 });
