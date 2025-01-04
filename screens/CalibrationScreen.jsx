@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Dimensions, ScrollView } from 'react-native';
 import { globalStyles, colors } from '../styles/globalStyles';
 import	{	MaterialIcons	}	from	'@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
-const MICROSCOPE_SCALES = [
+const MICROSCOPE_SCALES_18MM = [
   { label: '4x objetivo - 10x ocular', value: 4500 },
   { label: '10x objetivo - 10x ocular', value: 1800 },
   { label: '40x objetivo - 10x ocular', value: 450 },
   { label: '100x objetivo - 10x ocular', value: 180 },
+];
+
+const MICROSCOPE_SCALES_20MM = [
+  { label: '4x objetivo - 10x ocular', value: 5000 },
+  { label: '10x objetivo - 10x ocular', value: 2000 },
+  { label: '40x objetivo - 10x ocular', value: 500 },
+  { label: '100x objetivo - 10x ocular', value: 200 },
 ];
 
 export default function CalibrationScreen({ route, navigation }) {
@@ -17,6 +24,7 @@ export default function CalibrationScreen({ route, navigation }) {
   const [calibrationType, setCalibrationType] = useState(null);
   const [manualDistance, setManualDistance] = useState('');
   const [selectedScale, setSelectedScale] = useState(null);
+  const [selectedDiameter, setSelectedDiameter] = useState(null);
 
   const handleConfirm = () => {
     let scale;
@@ -31,7 +39,8 @@ export default function CalibrationScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -77,9 +86,34 @@ export default function CalibrationScreen({ route, navigation }) {
         </View>
       )}
 
-      {calibrationType === 'automatic' && (
-        <View style={styles.scalesContainer}>
-          {MICROSCOPE_SCALES.map((scale) => (
+{calibrationType === 'automatic' && (
+    <View style={styles.scalesContainer}>
+      <Text style={styles.diameterTitle}>Seleccione el diámetro del lente:</Text>
+      <View style={styles.diameterContainer}>
+        <TouchableOpacity
+          style={[
+            styles.diameterButton,
+            selectedDiameter === 18 && styles.selectedDiameter
+          ]}
+          onPress={() => setSelectedDiameter(18)}
+        >
+          <Text style={styles.diameterText}>18 mm</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.diameterButton,
+            selectedDiameter === 20 && styles.selectedDiameter
+          ]}
+          onPress={() => setSelectedDiameter(20)}
+        >
+          <Text style={styles.diameterText}>20 mm</Text>
+        </TouchableOpacity>
+      </View>
+
+      {selectedDiameter && (
+        <>
+        <Text style={styles.scaleTitle}>Seleccione el objetivo usado:</Text>
+          {(selectedDiameter === 18 ? MICROSCOPE_SCALES_18MM : MICROSCOPE_SCALES_20MM).map((scale) => (
             <TouchableOpacity
               key={scale.value}
               style={[
@@ -92,8 +126,10 @@ export default function CalibrationScreen({ route, navigation }) {
               <Text style={styles.scaleValue}>{scale.value} µm</Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </>
       )}
+    </View>
+  )}
 
       <TouchableOpacity
         style={[
@@ -107,20 +143,23 @@ export default function CalibrationScreen({ route, navigation }) {
         disabled={
           !calibrationType || 
           (calibrationType === 'manual' && !manualDistance) ||
-          (calibrationType === 'automatic' && !selectedScale)
+          (calibrationType === 'automatic' && (!selectedScale || !selectedDiameter))
         }
       >
         <Text style={styles.confirmButtonText}>Confirmar Calibración</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: width * 0.03,
     backgroundColor: colors.softWhite,
+  },
+  scrollContent: {
+    padding: width * 0.03,
+    paddingBottom: height * 0.01, // Adds space at bottom
   },
   header: {
     flexDirection: 'row',
@@ -184,6 +223,12 @@ const styles = StyleSheet.create({
   selectedScale: {
     backgroundColor: colors.mainBlue,
   },
+  scaleTitle: {
+    fontSize: width * 0.045,
+    color: colors.navy,
+    marginBottom: height * 0.015,
+    fontWeight: '500',
+  },
   scaleText: {
     color: 'white',
     fontSize: width * 0.05,
@@ -192,6 +237,32 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: width * 0.04,
     marginTop: height * 0.004,
+  },
+  diameterTitle: {
+    fontSize: width * 0.05,
+    color: colors.navy,
+    marginBottom: height * 0.015,
+    fontWeight: '500',
+  },
+  diameterContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: height * 0.025,
+  },
+  diameterButton: {
+    backgroundColor: colors.lightGray,
+    padding: width * 0.03,
+    borderRadius: width * 0.02,
+    width: '45%',
+    alignItems: 'center',
+  },
+  selectedDiameter: {
+    backgroundColor: colors.mainBlue,
+  },
+  diameterText: {
+    color: 'white',
+    fontSize: width * 0.04,
+    fontWeight: '400',
   },
   confirmButton: {
     backgroundColor: colors.mainBlue,
