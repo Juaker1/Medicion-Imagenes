@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     marginVertical: height * 0.02,
   },
   label: {
-    fontSize: width * 0.05,
+    fontSize: width * 0.045,
     marginBottom: height * 0.015,
   },
   input: {
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     borderColor: colors.lightGray,
     borderRadius: width * 0.02,
     padding: width * 0.025,
-    fontSize: width * 0.05,
+    fontSize: width * 0.045,
   },
   scalesContainer: {
     marginVertical: height * 0.02,
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   },
   scaleText: {
     color: 'white',
-    fontSize: width * 0.05,
+    fontSize: width * 0.045,
   },
   scaleValue: {
     color: 'white',
@@ -276,6 +276,6 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     color: 'white',
     textAlign: 'center',
-    fontSize: width * 0.05,
+    fontSize: width * 0.045,
   },
 });

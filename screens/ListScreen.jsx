@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   measurementText: {
     color: 'white',
-    fontSize: width * 0.05,
+    fontSize: width * 0.045,
     marginBottom: height * 0.003,
   },
   timestampText: {
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: '#cccccc',
-    fontSize: width * 0.05,
+    fontSize: width * 0.045,
   },
   deleteContainer: {
     flexDirection: 'row',

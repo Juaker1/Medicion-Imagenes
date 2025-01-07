@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   },
   captureText: {
     color: 'white',
-    fontSize: width * 0.05,
+    fontSize: width * 0.04,
   },
   modalOverlay: {
     flex: 1,

@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: width * 0.05,
+    fontSize: width * 0.04,
     fontWeight: '700',
   },
   retakeButton: {
