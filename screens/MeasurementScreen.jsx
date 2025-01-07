@@ -6,6 +6,9 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  Modal,
+  TextInput,
+  TouchableWithoutFeedback
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -44,6 +47,52 @@ const Toast = ({ message, isVisible }) => {
   );
 };
 
+const NameMeasurementModal = ({ visible, onClose, onSave }) => {
+  const [measurementName, setMeasurementName] = useState('');
+
+  return (
+    <Modal
+      transparent
+      visible={visible}
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.modalOverlay}>
+          <TouchableWithoutFeedback>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Nombrar medición</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Ingrese un nombre para la medición"
+                value={measurementName}
+                onChangeText={setMeasurementName}
+              />
+              <View style={styles.modalButtons}>
+                <TouchableOpacity 
+                  style={[styles.modalButton, styles.cancelButton]} 
+                  onPress={onClose}
+                >
+                  <Text style={styles.modalButtonText}>Cancelar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.modalButton, styles.savenameButton]} 
+                  onPress={() => {
+                    onSave(measurementName);
+                    setMeasurementName('');
+                  }}
+                >
+                  <Text style={styles.modalButtonText}>Guardar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+};
+
 export default function MeasurementScreen({ route, navigation }) {
   const { imageUri } = route.params;
   const [points, setPoints] = useState([]);
@@ -51,7 +100,9 @@ export default function MeasurementScreen({ route, navigation }) {
   const [calibratedScale, setCalibratedScale] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  const [measurements, setMeasurements] = useState([]);
+  const [measurements, setMeasurements] = useState(route.params?.measurements || [])
+  const [showNameModal, setShowNameModal] = useState(false);
+  
 
   const screenWidth = Dimensions.get('window').width;
   const screenHeight = Dimensions.get('window').height;
@@ -67,6 +118,15 @@ export default function MeasurementScreen({ route, navigation }) {
   const translateY = useSharedValue(0);
   const savedTranslateX = useSharedValue(0);
   const savedTranslateY = useSharedValue(0);
+
+  useEffect(() => {
+    if (route.params?.existingMeasurement) {
+      const { points: savedPoints, calibratedScale: savedScale } = route.params.existingMeasurement;
+      setPoints(savedPoints);
+      setCalibratedScale(savedScale);
+    }
+  }, [route.params?.existingMeasurement]);
+  
 
 
   const calculatePixelDistance = () => {
@@ -202,15 +262,27 @@ export default function MeasurementScreen({ route, navigation }) {
       }, 2000);
       return;
     }
-  
+    setShowNameModal(true);
+  };
+
+  // Add this function
+  const handleSaveMeasurement = (name) => {
     const measurement = {
       id: Date.now(),
+      name: name || 'Medición sin nombre',
       distance: calculateRealDistance(),
       units: calibratedScale ? 'µm' : 'unidades',
-      timestamp: new Date().toLocaleString(),
+      points: points,
+      imageUri: imageUri,
+      calibratedScale: calibratedScale
     };
-  
-    setMeasurements(prev => [...prev, measurement]);
+    
+    const updatedMeasurements = [...measurements, measurement];
+    setMeasurements(updatedMeasurements);
+    if (route.params?.setMeasurements) {
+      route.params.setMeasurements(updatedMeasurements);
+    }
+    setShowNameModal(false);
     setToastMessage("Medición guardada exitosamente");
     setShowToast(true);
     setTimeout(() => {
@@ -219,11 +291,15 @@ export default function MeasurementScreen({ route, navigation }) {
   };
 
   return (
+    
     <View style={styles.container}>
+      
+      
       <Toast 
         message={toastMessage} 
         isVisible={showToast} 
       />
+      
       <View style={styles.topContainer}>
         <TouchableOpacity
           style={styles.backButton}
@@ -331,6 +407,13 @@ export default function MeasurementScreen({ route, navigation }) {
     <Text style={styles.bottomButtonText}>Ver Lista de Mediciones</Text>
   </TouchableOpacity>
 </View>
+    <View>
+      <NameMeasurementModal
+        visible={showNameModal}
+        onClose={() => setShowNameModal(false)}
+        onSave={handleSaveMeasurement}
+      />
+      </View>
     </View>
   );
 }
@@ -484,5 +567,56 @@ const styles = StyleSheet.create({
   bottomButtonText: {
     color: 'white',
     fontSize: width * 0.035,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: width * 0.02,
+    padding: width * 0.05,
+    width: width * 0.8,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: width * 0.06,
+    fontWeight: 'bold',
+    marginBottom: height * 0.02,
+    color: '#34568B',
+  },
+  modalInput: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: width * 0.02,
+    padding: width * 0.03,
+    marginBottom: height * 0.02,
+    fontSize: width * 0.04,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  modalButton: {
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.05,
+    borderRadius: width * 0.02,
+    minWidth: width * 0.25,
+    alignItems: 'center',
+  },
+  savenameButton: {
+    backgroundColor: '#388e3c',
+  },
+  cancelButton: {
+    backgroundColor: '#9e9e9e',
+    marginRight: width * 0.025,
+  },
+  modalButtonText: {
+    fontSize: width * 0.04,
+    color: 'white',
   },
 });

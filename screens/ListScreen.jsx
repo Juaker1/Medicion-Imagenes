@@ -1,9 +1,74 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TouchableWithoutFeedback, Dimensions} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TouchableWithoutFeedback, Dimensions, TextInput} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
+const MeasurementActionModal = ({ visible, onClose, measurement, onNameChange, onViewMeasurement }) => {
+  // Reset newName when modal opens/measurement changes
+  const [newName, setNewName] = useState('');
+  
+  useEffect(() => {
+    if (visible && measurement) {
+      setNewName(measurement.name);
+    }
+  }, [visible, measurement]);
+
+  const hasNameChanged = measurement?.name !== newName;
+  const isNameValid = newName.trim() !== '';
+
+  return (
+    <Modal
+      transparent
+      visible={visible}
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.modalOverlay}>
+          <TouchableWithoutFeedback>
+            <View style={styles.actionModalContent}>
+              <Text style={styles.actionModalTitle}>Opciones de medición</Text>
+              <TextInput
+                style={styles.actionModalInput}
+                value={newName}
+                onChangeText={setNewName}
+                placeholder="Nombre de la medición"
+              />
+              <View style={styles.actionModalButtonsContainer}>
+              <View style={styles.actionModalTopButtons}>
+  <TouchableOpacity 
+    style={[styles.actionModalButton, styles.cancelButton]} 
+    onPress={onClose}
+  >
+    <Text style={styles.actionModalButtonText}>Cancelar</Text>
+  </TouchableOpacity>
+  <TouchableOpacity 
+    style={[
+      styles.actionModalButton, 
+      styles.editButton,
+      (!hasNameChanged || !isNameValid) && { opacity: 0.5 }
+    ]} 
+    onPress={() => onNameChange(newName)}
+    disabled={!hasNameChanged || !isNameValid}
+  >
+    <Text style={styles.actionModalButtonText}>Cambiar Nombre</Text>
+  </TouchableOpacity>
+</View>
+        <TouchableOpacity 
+          style={[styles.actionModalButton, styles.viewButton, styles.viewMeasurementButton]} 
+          onPress={onViewMeasurement}
+        >
+          <Text style={styles.actionModalButtonText}>Ver Medición</Text>
+        </TouchableOpacity>
+      </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+};
 const DeleteModal = ({ visible, onClose, onConfirm, message }) => (
     <Modal
       transparent
@@ -44,6 +109,9 @@ export default function MeasurementHistoryScreen({ route, navigation }) {
     const [localMeasurements, setLocalMeasurements] = useState(route.params.measurements);
     const [selectedMeasures, setSelectedMeasures] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedMeasurement, setSelectedMeasurement] = useState(null);
+    const [showActionModal, setShowActionModal] = useState(false);
+
 
     const handleClearAll = () => {
         setShowDeleteModal(true);
@@ -74,6 +142,38 @@ export default function MeasurementHistoryScreen({ route, navigation }) {
       );
     };
 
+    useEffect(() => {
+      if (route.params?.measurements) {
+        setLocalMeasurements(route.params.measurements);
+      }
+    }, [route.params?.measurements]);
+  
+    const handleViewMeasurement = () => {
+      navigation.navigate('Measurement', { 
+        imageUri: selectedMeasurement.imageUri,
+        existingMeasurement: selectedMeasurement,
+        measurements: localMeasurements, // Pass current measurements
+        setMeasurements: route.params.setMeasurements // Pass the setter function
+      });
+      setShowActionModal(false);
+    };
+
+    const handleMeasurementPress = (measurement) => {
+      setSelectedMeasurement(measurement);
+      setShowActionModal(true);
+    };
+  
+    const handleNameChange = (newName) => {
+      const updatedMeasurements = localMeasurements.map(m => 
+        m.id === selectedMeasurement.id ? { ...m, name: newName } : m
+      );
+      setLocalMeasurements(updatedMeasurements);
+      route.params.setMeasurements(updatedMeasurements);
+      setShowActionModal(false);
+    };
+
+    
+    
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -106,25 +206,45 @@ export default function MeasurementHistoryScreen({ route, navigation }) {
         </View>
       ) : (
         <ScrollView style={styles.scrollView}>
-          {localMeasurements.map((measurement) => (
-            <TouchableOpacity
-              key={measurement.id}
-              onPress={() => toggleMeasureSelection(measurement.id)}
-            >
-              <View style={[
-                styles.measurementCard,
-                selectedMeasures.includes(measurement.id) && styles.selectedCard
-              ]}>
-                <Text style={styles.measurementText}>
-                  Distancia: {measurement.distance} {measurement.units}
-                </Text>
-                <Text style={styles.timestampText}>
-                  {measurement.timestamp}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+  {localMeasurements.map((measurement) => (
+    <TouchableOpacity
+      key={measurement.id}
+      onPress={() => selectedMeasures.length > 0 
+        ? toggleMeasureSelection(measurement.id) 
+        : handleMeasurementPress(measurement)}
+      onLongPress={() => toggleMeasureSelection(measurement.id)}
+    >
+      <View style={[
+        styles.measurementCard,
+        selectedMeasures.includes(measurement.id) && styles.selectedCard
+      ]}>
+        <View style={styles.cardContent}>
+  <View style={styles.measurementInfo}>
+    <Text style={styles.measurementText}>
+      {measurement.name}
+    </Text>
+    <Text style={styles.distanceText}>
+      {measurement.distance} {measurement.units}
+    </Text>
+  </View>
+  <TouchableOpacity 
+    style={styles.checkboxContainer}
+    onPress={() => toggleMeasureSelection(measurement.id)}
+  >
+    <MaterialIcons 
+      name={selectedMeasures.includes(measurement.id) 
+        ? "check-box" 
+        : "check-box-outline-blank"
+      } 
+      size={width * 0.08} 
+      color="white" 
+    />
+  </TouchableOpacity>
+</View>
+      </View>
+    </TouchableOpacity>
+  ))}
+</ScrollView>
       )}
         <DeleteModal
             visible={showDeleteModal}
@@ -136,12 +256,20 @@ export default function MeasurementHistoryScreen({ route, navigation }) {
                 : "¿Estás seguro de que deseas borrar todas las mediciones?"
             }
         />
+        <MeasurementActionModal
+  visible={showActionModal}
+  onClose={() => setShowActionModal(false)}
+  measurement={selectedMeasurement}
+  onNameChange={handleNameChange}
+  onViewMeasurement={handleViewMeasurement}
+/>
     </View>
 
   );
 }
 
 const styles = StyleSheet.create({
+  // Main Container Styles
   container: {
     flex: 1,
   },
@@ -155,9 +283,22 @@ const styles = StyleSheet.create({
   backButton: {
     padding: width * 0.002,
   },
+
+  // List Styles
   scrollView: {
     flex: 1,
     padding: width * 0.03,
+  },
+  checkboxContainer: {
+    marginRight: width * 0.03,
+    padding: width * 0.01,
+  },
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  measurementInfo: {
+    flex: 1,
   },
   measurementCard: {
     backgroundColor: '#34568B',
@@ -172,11 +313,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: width * 0.045,
     marginBottom: height * 0.003,
+    fontWeight: 'bold',
   },
-  timestampText: {
+  distanceText: {
     color: '#cccccc',
     fontSize: width * 0.04,
   },
+
+  // Empty State Styles
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -186,6 +330,7 @@ const styles = StyleSheet.create({
     color: '#cccccc',
     fontSize: width * 0.045,
   },
+  // Delete Button Styles
   deleteContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -202,12 +347,16 @@ const styles = StyleSheet.create({
   disabledButton: {
     opacity: 0.5,
   },
+
+  // Modal Common Styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  // Delete Modal Styles
   modalContent: {
     backgroundColor: 'white',
     borderRadius: width * 0.02,
@@ -239,6 +388,71 @@ const styles = StyleSheet.create({
     minWidth: width * 0.25,
     alignItems: 'center',
   },
+  modalButtonText: {
+    color: 'white',
+    fontSize: width * 0.05,
+    fontWeight: '500',
+  },
+
+  // Action Modal Styles
+  actionModalContent: {
+    backgroundColor: 'white',
+    borderRadius: width * 0.02,
+    padding: width * 0.05,
+    width: width * 0.8,
+    alignItems: 'center',
+  },
+  actionModalTitle: {
+    fontSize: width * 0.06,
+    fontWeight: 'bold',
+    marginBottom: height * 0.02,
+    color: '#34568B',
+  },
+  actionModalInput: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: width * 0.02,
+    padding: width * 0.03,
+    marginBottom: height * 0.02,
+    fontSize: width * 0.04,
+  },
+  actionModalButtonsContainer: {
+    width: '100%',
+    gap: height * 0.015,
+  },
+  actionModalTopButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: width * 0.02,
+  },
+  actionModalBottomButtons: {
+    width: '100%',
+  },
+  actionModalButton: {
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.03,
+    borderRadius: width * 0.02,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: height * 0.06,
+  },
+  actionModalButtonText: {
+    color: 'white',
+    fontSize: width * 0.04,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  fullWidthButton: {
+    width: '100%',
+  },
+  viewMeasurementButton: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingVertical: height * 0.02,
+  },
+  // Button Color Variants
   cancelButton: {
     backgroundColor: '#9e9e9e',
     marginRight: width * 0.025,
@@ -246,9 +460,11 @@ const styles = StyleSheet.create({
   deleteButton: {
     backgroundColor: '#d32f2f',
   },
-  modalButtonText: {
-    color: 'white',
-    fontSize: width * 0.05,
-    fontWeight: '500',
+  editButton: {
+    backgroundColor: '#FFA000',
+    marginRight: width * 0.025,
+  },
+  viewButton: {
+    backgroundColor: '#388e3c',
   },
 });

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { View, Image, TouchableOpacity, StyleSheet, Text, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
