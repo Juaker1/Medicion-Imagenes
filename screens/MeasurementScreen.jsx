@@ -161,23 +161,31 @@ export default function MeasurementScreen({ route, navigation }) {
     setSelectedPoint(null);
   };
 
+  
+
   const handleImagePress = (event) => {
     const { locationX, locationY } = event.nativeEvent;
     
-    // Store raw coordinates without scaling
-    const x = locationX;
-    const y = locationY;
-
+    // Always use exact tap coordinates
+    const newPoint = {
+      x: locationX,
+      y: locationY
+    };
+  
     if (selectedPoint !== null) {
-      const updatedPoints = [...points];
-      updatedPoints[selectedPoint] = { x, y };
-      setPoints(updatedPoints);
+      setPoints(prevPoints => {
+        const newPoints = [...prevPoints];
+        // Direct assignment of new coordinates
+        newPoints[selectedPoint] = newPoint;
+        return newPoints;
+      });
       setSelectedPoint(null);
     } else if (points.length < 2) {
-      setPoints([...points, { x, y }]);
+      setPoints(prevPoints => [...prevPoints, newPoint]);
     }
   };
-
+  
+  // Update renderPoints to ensure absolute positioning
   const renderPoints = () => {
     return points.map((point, index) => (
       <View
@@ -185,9 +193,10 @@ export default function MeasurementScreen({ route, navigation }) {
         style={[
           styles.pointContainer,
           {
-            left: point.x - 6,
-            top: point.y - 6,
             position: 'absolute',
+            left: point.x - 6, // Offset for centering
+            top: point.y - 6,  // Offset for centering
+            zIndex: selectedPoint === index ? 3 : 2, // Higher z-index for selected point
           },
         ]}
       >
@@ -201,9 +210,8 @@ export default function MeasurementScreen({ route, navigation }) {
       </View>
     ));
   };
-
   const selectPoint = (index) => {
-    setSelectedPoint(index);
+    setSelectedPoint(prevSelected => prevSelected === index ? null : index);
   };
 
   const pinchGesture = Gesture.Pinch()
@@ -309,24 +317,30 @@ export default function MeasurementScreen({ route, navigation }) {
         </TouchableOpacity>
         
         <View style={styles.pointButtonsContainer}>
-          <TouchableOpacity
-            style={styles.pointButton}
-            onPress={() => selectPoint(0)}
-          >
-            <Text style={styles.pointButtonText}>Punto 1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.pointButton}
-            onPress={() => selectPoint(1)}
-          >
-            <Text style={styles.pointButtonText}>Punto 2</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+    style={[
+      styles.pointButton,
+      { opacity: selectedPoint === 0 ? 1 : 0.6 }
+    ]}
+    onPress={() => selectPoint(0)}
+  >
+    <Text style={styles.pointButtonText}>Punto 1</Text>
+  </TouchableOpacity>
+  <TouchableOpacity
+    style={[
+      styles.pointButton,
+      { opacity: selectedPoint === 1 ? 1 : 0.6 }
+    ]}
+    onPress={() => selectPoint(1)}
+  >
+    <Text style={styles.pointButtonText}>Punto 2</Text>
+  </TouchableOpacity>
           <TouchableOpacity
             style={[styles.deleteButton, points.length === 0 && styles.disabledButton]}
             onPress={clearPoints}
             disabled={points.length === 0}
           >
-            <MaterialIcons name="delete" size={width * 0.055} color="white" />
+            <MaterialIcons name="delete" size={width * 0.065} color="white" />
           </TouchableOpacity>
         </View>
         
@@ -336,7 +350,7 @@ export default function MeasurementScreen({ route, navigation }) {
               style={styles.resetCalibrationButton}
               onPress={resetCalibration}
             >
-              <MaterialIcons name="straighten" size={width * 0.055} color="white" />
+              <MaterialIcons name="straighten" size={width * 0.065} color="white" />
             </TouchableOpacity>
           )}
           <TouchableOpacity
@@ -436,7 +450,7 @@ const styles = StyleSheet.create({
   },
   pointButtonsContainer: {
     flexDirection: 'row',
-    gap: width * 0.02,
+    gap: width * 0.03,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -449,6 +463,9 @@ const styles = StyleSheet.create({
   disabledButton: {
     opacity: 0.5,
   },
+  activePointButton: {
+    backgroundColor: '#1a2f4d',
+  },
   pointButton: {
     backgroundColor: '#34568B',
     padding: width * 0.027,
@@ -457,7 +474,7 @@ const styles = StyleSheet.create({
   },
   pointButtonText: {
     color: 'white',
-    fontSize: width * 0.035,
+    fontSize: width * 0.04,
   },
   calibrationContainer: {
     flexDirection: 'row',
@@ -477,7 +494,7 @@ const styles = StyleSheet.create({
   },
   calibrateButtonText: {
     color: 'white',
-    fontSize: width * 0.035,
+    fontSize: width * 0.04,
     textAlign: 'center',
   },
   infoContainer: {
