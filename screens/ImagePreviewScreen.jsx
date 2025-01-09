@@ -18,21 +18,21 @@ export default function ImagePreviewScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Image 
-        source={{ uri: imageUri }} 
-        style={styles.previewImage} 
+      <Image
+        source={{ uri: imageUri }}
+        style={styles.previewImage}
         resizeMode="contain"
       />
       <View style={styles.buttonContainer}>
-        <TouchableOpacity 
-          style={[globalStyles.button, styles.button, styles.retakeButton]} 
+        <TouchableOpacity
+          style={[globalStyles.button, styles.button, styles.retakeButton]}
           onPress={handleRetake}
         >
           <MaterialIcons name="replay" size={width * 0.06} color="white" />
           <Text style={styles.buttonText}>Volver a Tomar</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-          style={[globalStyles.button, styles.button, styles.confirmButton]} 
+        <TouchableOpacity
+          style={[globalStyles.button, styles.button, styles.confirmButton]}
           onPress={handleConfirm}
         >
           <MaterialIcons name="check" size={width * 0.06} color="white" />

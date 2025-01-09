@@ -35,7 +35,7 @@ const TUTORIAL_STEPS = [
     title: 'Calibración Manual',
     description: 'Ahora para la medición manual:\n\n• Primero haz una línea de medición de una medición de la cual conozcas su distancia en la vida real.\n• Luego selecciona la calibración manual e ingresa esta distancia conocida.\n• Cuando hayas ingresado la distancia, presiona el botón de confirmación.\n• La calibración se mantiene para que puedas hacer la medición que quieras en la imagen.',
     images: [require('../assets/lineamanual.png'),
-      require('../assets/calibracionmanual.png')
+    require('../assets/calibracionmanual.png')
     ]
   },
   {
@@ -43,7 +43,7 @@ const TUTORIAL_STEPS = [
     title: 'Visualización de Medidas',
     description: 'Las mediciones se muestran antes y después de la calibración:\n\n• La distancia aparece en la esquina inferior\n• Antes de calibrar, se muestra la distancia en unidades, y sin calibración\n• Luego de la calibración se muestra la distancia en (µm) junto con la escala de la imagen',
     images: [require('../assets/distanciasincalibrar.png'),
-      require('../assets/distanciacalibrada.png')
+    require('../assets/distanciacalibrada.png')
     ]
   },
   {
@@ -63,9 +63,9 @@ const TUTORIAL_STEPS = [
     title: 'Lista de Mediciones',
     description: 'En esta parte puedes ver todas tus mediciones guardadas:\n\n• Si te equivocaste en una medición, selecciónala y presiona el botón de "Borrar".\n• Puedes seleccionar varias mediciones para borrarlas.\n• Puedes borrar todas las mediciones si no tienes seleccionada ninguna con el botón de "Borrar Todas".',
     images: [require('../assets/Lista1.png'),
-      require('../assets/Lista2.png'),
-      require('../assets/Lista3.png'),
-      require('../assets/Lista4.png')
+    require('../assets/Lista2.png'),
+    require('../assets/Lista3.png'),
+    require('../assets/Lista4.png')
     ]
   }
 ];

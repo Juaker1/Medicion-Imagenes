@@ -17,7 +17,7 @@ import Animated, {
   useSharedValue,
   withTiming,
   withSequence,
-  
+
 } from 'react-native-reanimated';
 import Svg, { Line } from 'react-native-svg';
 
@@ -69,14 +69,14 @@ const NameMeasurementModal = ({ visible, onClose, onSave }) => {
                 onChangeText={setMeasurementName}
               />
               <View style={styles.modalButtons}>
-                <TouchableOpacity 
-                  style={[styles.modalButton, styles.cancelButton]} 
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.cancelButton]}
                   onPress={onClose}
                 >
                   <Text style={styles.modalButtonText}>Cancelar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
-                  style={[styles.modalButton, styles.savenameButton]} 
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.savenameButton]}
                   onPress={() => {
                     onSave(measurementName);
                     setMeasurementName('');
@@ -102,13 +102,13 @@ export default function MeasurementScreen({ route, navigation }) {
   const [toastMessage, setToastMessage] = useState('');
   const [measurements, setMeasurements] = useState(route.params?.measurements || [])
   const [showNameModal, setShowNameModal] = useState(false);
-  
+
 
   const screenWidth = Dimensions.get('window').width;
   const screenHeight = Dimensions.get('window').height;
   const imageWidth = screenWidth;
   const imageHeight = screenHeight;
-  
+
 
   const MAX_ZOOM = 7;
 
@@ -126,7 +126,16 @@ export default function MeasurementScreen({ route, navigation }) {
       setCalibratedScale(savedScale);
     }
   }, [route.params?.existingMeasurement]);
-  
+
+  const handleBackPress = () => {
+    const source = route.params?.source;
+
+    if (source === 'Examples') {
+      navigation.navigate('ExamplesMain');
+    } else {
+      navigation.navigate('HomeScreen');
+    }
+  };
 
 
   const calculatePixelDistance = () => {
@@ -161,17 +170,17 @@ export default function MeasurementScreen({ route, navigation }) {
     setSelectedPoint(null);
   };
 
-  
+
 
   const handleImagePress = (event) => {
     const { locationX, locationY } = event.nativeEvent;
-    
+
     // Always use exact tap coordinates
     const newPoint = {
       x: locationX,
       y: locationY
     };
-  
+
     if (selectedPoint !== null) {
       setPoints(prevPoints => {
         const newPoints = [...prevPoints];
@@ -184,7 +193,7 @@ export default function MeasurementScreen({ route, navigation }) {
       setPoints(prevPoints => [...prevPoints, newPoint]);
     }
   };
-  
+
   // Update renderPoints to ensure absolute positioning
   const renderPoints = () => {
     return points.map((point, index) => (
@@ -284,7 +293,7 @@ export default function MeasurementScreen({ route, navigation }) {
       imageUri: imageUri,
       calibratedScale: calibratedScale
     };
-    
+
     const updatedMeasurements = [...measurements, measurement];
     setMeasurements(updatedMeasurements);
     if (route.params?.setMeasurements) {
@@ -299,42 +308,42 @@ export default function MeasurementScreen({ route, navigation }) {
   };
 
   return (
-    
+
     <View style={styles.container}>
-      
-      
-      <Toast 
-        message={toastMessage} 
-        isVisible={showToast} 
+
+
+      <Toast
+        message={toastMessage}
+        isVisible={showToast}
       />
-      
+
       <View style={styles.topContainer}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.navigate('HomeScreen')}
+          onPress={handleBackPress}
         >
           <MaterialIcons name="arrow-back" size={width * 0.08} color="white" />
         </TouchableOpacity>
-        
+
         <View style={styles.pointButtonsContainer}>
-        <TouchableOpacity
-    style={[
-      styles.pointButton,
-      { opacity: selectedPoint === 0 ? 1 : 0.6 }
-    ]}
-    onPress={() => selectPoint(0)}
-  >
-    <Text style={styles.pointButtonText}>Punto 1</Text>
-  </TouchableOpacity>
-  <TouchableOpacity
-    style={[
-      styles.pointButton,
-      { opacity: selectedPoint === 1 ? 1 : 0.6 }
-    ]}
-    onPress={() => selectPoint(1)}
-  >
-    <Text style={styles.pointButtonText}>Punto 2</Text>
-  </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.pointButton,
+              { opacity: selectedPoint === 0 ? 1 : 0.6 }
+            ]}
+            onPress={() => selectPoint(0)}
+          >
+            <Text style={styles.pointButtonText}>Punto 1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.pointButton,
+              { opacity: selectedPoint === 1 ? 1 : 0.6 }
+            ]}
+            onPress={() => selectPoint(1)}
+          >
+            <Text style={styles.pointButtonText}>Punto 2</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={[styles.deleteButton, points.length === 0 && styles.disabledButton]}
             onPress={clearPoints}
@@ -343,7 +352,7 @@ export default function MeasurementScreen({ route, navigation }) {
             <MaterialIcons name="delete" size={width * 0.065} color="white" />
           </TouchableOpacity>
         </View>
-        
+
         <View style={styles.calibrationContainer}>
           {calibratedScale && (
             <TouchableOpacity
@@ -362,7 +371,7 @@ export default function MeasurementScreen({ route, navigation }) {
         </View>
       </View>
 
-    <View style={styles.imageContainer}>
+      <View style={styles.imageContainer}>
         <GestureDetector gesture={composedGesture}>
           <Animated.View style={animatedStyle}>
             <TouchableOpacity onPress={handleImagePress} activeOpacity={1}>
@@ -402,31 +411,31 @@ export default function MeasurementScreen({ route, navigation }) {
       </View>
 
       <View style={styles.bottomContainer}>
-  <TouchableOpacity
-    style={styles.saveButton}
-    onPress={saveMeasurement}
-  >
-    <MaterialIcons name="save" size={width * 0.05} color="white" />
-    <Text style={styles.bottomButtonText}>Guardar Medición</Text>
-  </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={saveMeasurement}
+        >
+          <MaterialIcons name="save" size={width * 0.05} color="white" />
+          <Text style={styles.bottomButtonText}>Guardar Medición</Text>
+        </TouchableOpacity>
 
-  <TouchableOpacity
-    style={styles.historyButton}
-    onPress={() => navigation.navigate('MeasurementHistory', { 
-      measurements: measurements, 
-      setMeasurements: setMeasurements 
-    })}
-  >
-    <MaterialIcons name="format-list-bulleted" size={width * 0.05} color="white" />
-    <Text style={styles.bottomButtonText}>Ver Lista de Mediciones</Text>
-  </TouchableOpacity>
-</View>
-    <View>
-      <NameMeasurementModal
-        visible={showNameModal}
-        onClose={() => setShowNameModal(false)}
-        onSave={handleSaveMeasurement}
-      />
+        <TouchableOpacity
+          style={styles.historyButton}
+          onPress={() => navigation.navigate('MeasurementHistory', {
+            measurements: measurements,
+            setMeasurements: setMeasurements
+          })}
+        >
+          <MaterialIcons name="format-list-bulleted" size={width * 0.05} color="white" />
+          <Text style={styles.bottomButtonText}>Ver Lista de Mediciones</Text>
+        </TouchableOpacity>
+      </View>
+      <View>
+        <NameMeasurementModal
+          visible={showNameModal}
+          onClose={() => setShowNameModal(false)}
+          onSave={handleSaveMeasurement}
+        />
       </View>
     </View>
   );

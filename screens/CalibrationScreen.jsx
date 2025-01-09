@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Dimensions, ScrollView } from 'react-native';
 import { globalStyles, colors } from '../styles/globalStyles';
-import	{	MaterialIcons	}	from	'@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -33,13 +33,13 @@ export default function CalibrationScreen({ route, navigation }) {
     } else {
       scale = selectedScale / pixelDistance;
     }
-    
+
     onCalibrationComplete(scale);
     navigation.goBack();
   };
 
   return (
-    
+
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       <View style={styles.header}>
         <TouchableOpacity
@@ -50,7 +50,7 @@ export default function CalibrationScreen({ route, navigation }) {
         </TouchableOpacity>
         <Text style={styles.title}>Seleccione el método de calibración</Text>
       </View>
-      
+
       <View style={styles.methodContainer}>
         <TouchableOpacity
           style={[
@@ -61,7 +61,7 @@ export default function CalibrationScreen({ route, navigation }) {
         >
           <Text style={styles.methodText}>Manual</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity
           style={[
             styles.methodButton,
@@ -86,62 +86,62 @@ export default function CalibrationScreen({ route, navigation }) {
         </View>
       )}
 
-{calibrationType === 'automatic' && (
-    <View style={styles.scalesContainer}>
-      <Text style={styles.diameterTitle}>Seleccione el diámetro del lente:</Text>
-      <View style={styles.diameterContainer}>
-        <TouchableOpacity
-          style={[
-            styles.diameterButton,
-            selectedDiameter === 18 && styles.selectedDiameter
-          ]}
-          onPress={() => setSelectedDiameter(18)}
-        >
-          <Text style={styles.diameterText}>18 mm</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.diameterButton,
-            selectedDiameter === 20 && styles.selectedDiameter
-          ]}
-          onPress={() => setSelectedDiameter(20)}
-        >
-          <Text style={styles.diameterText}>20 mm</Text>
-        </TouchableOpacity>
-      </View>
-
-      {selectedDiameter && (
-        <>
-        <Text style={styles.scaleTitle}>Seleccione el objetivo usado:</Text>
-          {(selectedDiameter === 18 ? MICROSCOPE_SCALES_18MM : MICROSCOPE_SCALES_20MM).map((scale) => (
+      {calibrationType === 'automatic' && (
+        <View style={styles.scalesContainer}>
+          <Text style={styles.diameterTitle}>Seleccione el diámetro del lente:</Text>
+          <View style={styles.diameterContainer}>
             <TouchableOpacity
-              key={scale.value}
               style={[
-                styles.scaleButton,
-                selectedScale === scale.value && styles.selectedScale
+                styles.diameterButton,
+                selectedDiameter === 18 && styles.selectedDiameter
               ]}
-              onPress={() => setSelectedScale(scale.value)}
+              onPress={() => setSelectedDiameter(18)}
             >
-              <Text style={styles.scaleText}>{scale.label}</Text>
-              <Text style={styles.scaleValue}>{scale.value} µm</Text>
+              <Text style={styles.diameterText}>18 mm</Text>
             </TouchableOpacity>
-          ))}
-        </>
+            <TouchableOpacity
+              style={[
+                styles.diameterButton,
+                selectedDiameter === 20 && styles.selectedDiameter
+              ]}
+              onPress={() => setSelectedDiameter(20)}
+            >
+              <Text style={styles.diameterText}>20 mm</Text>
+            </TouchableOpacity>
+          </View>
+
+          {selectedDiameter && (
+            <>
+              <Text style={styles.scaleTitle}>Seleccione el objetivo usado:</Text>
+              {(selectedDiameter === 18 ? MICROSCOPE_SCALES_18MM : MICROSCOPE_SCALES_20MM).map((scale) => (
+                <TouchableOpacity
+                  key={scale.value}
+                  style={[
+                    styles.scaleButton,
+                    selectedScale === scale.value && styles.selectedScale
+                  ]}
+                  onPress={() => setSelectedScale(scale.value)}
+                >
+                  <Text style={styles.scaleText}>{scale.label}</Text>
+                  <Text style={styles.scaleValue}>{scale.value} µm</Text>
+                </TouchableOpacity>
+              ))}
+            </>
+          )}
+        </View>
       )}
-    </View>
-  )}
 
       <TouchableOpacity
         style={[
           styles.confirmButton,
-          (!calibrationType || 
-           (calibrationType === 'manual' && !manualDistance) ||
-           (calibrationType === 'automatic' && !selectedScale)) && 
+          (!calibrationType ||
+            (calibrationType === 'manual' && !manualDistance) ||
+            (calibrationType === 'automatic' && !selectedScale)) &&
           styles.disabledButton
         ]}
         onPress={handleConfirm}
         disabled={
-          !calibrationType || 
+          !calibrationType ||
           (calibrationType === 'manual' && !manualDistance) ||
           (calibrationType === 'automatic' && (!selectedScale || !selectedDiameter))
         }

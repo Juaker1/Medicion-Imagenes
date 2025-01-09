@@ -81,12 +81,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: width * 0.05,
   },
   customIcon: {
-    width: width * 0.5, 
-    height: width * 0.5, 
+    width: width * 0.5,
+    height: width * 0.5,
     resizeMode: 'contain',
   },
   welcomeTitle: {
-    fontSize: width * 0.1, 
+    fontSize: width * 0.1,
     fontWeight: 'bold',
     marginTop: height * 0.01,
     marginBottom: height * 0.025,

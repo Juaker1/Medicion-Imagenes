@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TouchableWithoutFeedback, Dimensions, TextInput} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TouchableWithoutFeedback, Dimensions, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
@@ -7,7 +7,7 @@ const { width, height } = Dimensions.get('window');
 const MeasurementActionModal = ({ visible, onClose, measurement, onNameChange, onViewMeasurement }) => {
   // Reset newName when modal opens/measurement changes
   const [newName, setNewName] = useState('');
-  
+
   useEffect(() => {
     if (visible && measurement) {
       setNewName(measurement.name);
@@ -36,65 +36,30 @@ const MeasurementActionModal = ({ visible, onClose, measurement, onNameChange, o
                 placeholder="Nombre de la medición"
               />
               <View style={styles.actionModalButtonsContainer}>
-              <View style={styles.actionModalTopButtons}>
-  <TouchableOpacity 
-    style={[styles.actionModalButton, styles.cancelButton]} 
-    onPress={onClose}
-  >
-    <Text style={styles.actionModalButtonText}>Cancelar</Text>
-  </TouchableOpacity>
-  <TouchableOpacity 
-    style={[
-      styles.actionModalButton, 
-      styles.editButton,
-      (!hasNameChanged || !isNameValid) && { opacity: 0.5 }
-    ]} 
-    onPress={() => onNameChange(newName)}
-    disabled={!hasNameChanged || !isNameValid}
-  >
-    <Text style={styles.actionModalButtonText}>Cambiar Nombre</Text>
-  </TouchableOpacity>
-</View>
-        <TouchableOpacity 
-          style={[styles.actionModalButton, styles.viewButton, styles.viewMeasurementButton]} 
-          onPress={onViewMeasurement}
-        >
-          <Text style={styles.actionModalButtonText}>Ver Medición</Text>
-        </TouchableOpacity>
-      </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
-      </TouchableWithoutFeedback>
-    </Modal>
-  );
-};
-const DeleteModal = ({ visible, onClose, onConfirm, message }) => (
-    <Modal
-      transparent
-      visible={visible}
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.modalOverlay}>
-          <TouchableWithoutFeedback>
-            <View style={styles.modalContent}>
-              <MaterialIcons name="warning" size={width * 0.2} color="#FFA000" />
-              <Text style={styles.modalTitle}>Borrar mediciones</Text>
-              <Text style={styles.modalMessage}>{message}</Text>
-              <View style={styles.modalButtons}>
-                <TouchableOpacity 
-                  style={[styles.modalButton, styles.cancelButton]} 
-                  onPress={onClose}
+                <View style={styles.actionModalTopButtons}>
+                  <TouchableOpacity
+                    style={[styles.actionModalButton, styles.cancelButton]}
+                    onPress={onClose}
+                  >
+                    <Text style={styles.actionModalButtonText}>Cancelar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.actionModalButton,
+                      styles.editButton,
+                      (!hasNameChanged || !isNameValid) && { opacity: 0.5 }
+                    ]}
+                    onPress={() => onNameChange(newName)}
+                    disabled={!hasNameChanged || !isNameValid}
+                  >
+                    <Text style={styles.actionModalButtonText}>Cambiar Nombre</Text>
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity
+                  style={[styles.actionModalButton, styles.viewButton, styles.viewMeasurementButton]}
+                  onPress={onViewMeasurement}
                 >
-                  <Text style={styles.modalButtonText}>Cancelar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={[styles.modalButton, styles.deleteButton]} 
-                  onPress={onConfirm}
-                >
-                  <Text style={styles.modalButtonText}>Borrar</Text>
+                  <Text style={styles.actionModalButtonText}>Ver Medición</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -103,77 +68,112 @@ const DeleteModal = ({ visible, onClose, onConfirm, message }) => (
       </TouchableWithoutFeedback>
     </Modal>
   );
-  
+};
+const DeleteModal = ({ visible, onClose, onConfirm, message }) => (
+  <Modal
+    transparent
+    visible={visible}
+    animationType="fade"
+    onRequestClose={onClose}
+  >
+    <TouchableWithoutFeedback onPress={onClose}>
+      <View style={styles.modalOverlay}>
+        <TouchableWithoutFeedback>
+          <View style={styles.modalContent}>
+            <MaterialIcons name="warning" size={width * 0.2} color="#FFA000" />
+            <Text style={styles.modalTitle}>Borrar mediciones</Text>
+            <Text style={styles.modalMessage}>{message}</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={onClose}
+              >
+                <Text style={styles.modalButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.deleteButton]}
+                onPress={onConfirm}
+              >
+                <Text style={styles.modalButtonText}>Borrar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+    </TouchableWithoutFeedback>
+  </Modal>
+);
+
 
 export default function MeasurementHistoryScreen({ route, navigation }) {
-    const [localMeasurements, setLocalMeasurements] = useState(route.params.measurements);
-    const [selectedMeasures, setSelectedMeasures] = useState([]);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [selectedMeasurement, setSelectedMeasurement] = useState(null);
-    const [showActionModal, setShowActionModal] = useState(false);
+  const [localMeasurements, setLocalMeasurements] = useState(route.params.measurements);
+  const [selectedMeasures, setSelectedMeasures] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedMeasurement, setSelectedMeasurement] = useState(null);
+  const [showActionModal, setShowActionModal] = useState(false);
 
 
-    const handleClearAll = () => {
-        setShowDeleteModal(true);
-      };
-    
-      const handleConfirmDelete = () => {
-        const isSelectedMode = selectedMeasures.length > 0;
-        if (isSelectedMode) {
-          const remainingMeasurements = localMeasurements.filter(
-            measure => !selectedMeasures.includes(measure.id)
-          );
-          setLocalMeasurements(remainingMeasurements);
-          route.params.setMeasurements(remainingMeasurements);
-          setSelectedMeasures([]);
-        } else {
-          setLocalMeasurements([]);
-          route.params.setMeasurements([]);
-          navigation.goBack();
-        }
-        setShowDeleteModal(false);
-      };
+  const handleClearAll = () => {
+    setShowDeleteModal(true);
+  };
 
-    const toggleMeasureSelection = (measureId) => {
-      setSelectedMeasures(prev => 
-        prev.includes(measureId)
-          ? prev.filter(id => id !== measureId)
-          : [...prev, measureId]
+  const handleConfirmDelete = () => {
+    const isSelectedMode = selectedMeasures.length > 0;
+    if (isSelectedMode) {
+      const remainingMeasurements = localMeasurements.filter(
+        measure => !selectedMeasures.includes(measure.id)
       );
-    };
+      setLocalMeasurements(remainingMeasurements);
+      route.params.setMeasurements(remainingMeasurements);
+      setSelectedMeasures([]);
+    } else {
+      setLocalMeasurements([]);
+      route.params.setMeasurements([]);
+      navigation.goBack();
+    }
+    setShowDeleteModal(false);
+  };
 
-    useEffect(() => {
-      if (route.params?.measurements) {
-        setLocalMeasurements(route.params.measurements);
-      }
-    }, [route.params?.measurements]);
-  
-    const handleViewMeasurement = () => {
-      navigation.navigate('Measurement', { 
-        imageUri: selectedMeasurement.imageUri,
-        existingMeasurement: selectedMeasurement,
-        measurements: localMeasurements, // Pass current measurements
-        setMeasurements: route.params.setMeasurements // Pass the setter function
-      });
-      setShowActionModal(false);
-    };
+  const toggleMeasureSelection = (measureId) => {
+    setSelectedMeasures(prev =>
+      prev.includes(measureId)
+        ? prev.filter(id => id !== measureId)
+        : [...prev, measureId]
+    );
+  };
 
-    const handleMeasurementPress = (measurement) => {
-      setSelectedMeasurement(measurement);
-      setShowActionModal(true);
-    };
-  
-    const handleNameChange = (newName) => {
-      const updatedMeasurements = localMeasurements.map(m => 
-        m.id === selectedMeasurement.id ? { ...m, name: newName } : m
-      );
-      setLocalMeasurements(updatedMeasurements);
-      route.params.setMeasurements(updatedMeasurements);
-      setShowActionModal(false);
-    };
+  useEffect(() => {
+    if (route.params?.measurements) {
+      setLocalMeasurements(route.params.measurements);
+    }
+  }, [route.params?.measurements]);
 
-    
-    
+  const handleViewMeasurement = () => {
+    navigation.navigate('Measurement', {
+      imageUri: selectedMeasurement.imageUri,
+      existingMeasurement: selectedMeasurement,
+      measurements: localMeasurements, // Pass current measurements
+      setMeasurements: route.params.setMeasurements // Pass the setter function
+    });
+    setShowActionModal(false);
+  };
+
+  const handleMeasurementPress = (measurement) => {
+    setSelectedMeasurement(measurement);
+    setShowActionModal(true);
+  };
+
+  const handleNameChange = (newName) => {
+    const updatedMeasurements = localMeasurements.map(m =>
+      m.id === selectedMeasurement.id ? { ...m, name: newName } : m
+    );
+    setLocalMeasurements(updatedMeasurements);
+    route.params.setMeasurements(updatedMeasurements);
+    setShowActionModal(false);
+  };
+
+
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -193,7 +193,7 @@ export default function MeasurementHistoryScreen({ route, navigation }) {
         >
           <MaterialIcons name="delete-sweep" size={width * 0.06} color="white" />
           <Text style={styles.deleteText}>
-            {selectedMeasures.length > 0 
+            {selectedMeasures.length > 0
               ? `Borrar (${selectedMeasures.length})`
               : 'Borrar Todas'}
           </Text>
@@ -206,63 +206,63 @@ export default function MeasurementHistoryScreen({ route, navigation }) {
         </View>
       ) : (
         <ScrollView style={styles.scrollView}>
-  {localMeasurements.map((measurement) => (
-    <TouchableOpacity
-      key={measurement.id}
-      onPress={() => selectedMeasures.length > 0 
-        ? toggleMeasureSelection(measurement.id) 
-        : handleMeasurementPress(measurement)}
-      onLongPress={() => toggleMeasureSelection(measurement.id)}
-    >
-      <View style={[
-        styles.measurementCard,
-        selectedMeasures.includes(measurement.id) && styles.selectedCard
-      ]}>
-        <View style={styles.cardContent}>
-  <View style={styles.measurementInfo}>
-    <Text style={styles.measurementText}>
-      {measurement.name}
-    </Text>
-    <Text style={styles.distanceText}>
-      {measurement.distance} {measurement.units}
-    </Text>
-  </View>
-  <TouchableOpacity 
-    style={styles.checkboxContainer}
-    onPress={() => toggleMeasureSelection(measurement.id)}
-  >
-    <MaterialIcons 
-      name={selectedMeasures.includes(measurement.id) 
-        ? "check-box" 
-        : "check-box-outline-blank"
-      } 
-      size={width * 0.08} 
-      color="white" 
-    />
-  </TouchableOpacity>
-</View>
-      </View>
-    </TouchableOpacity>
-  ))}
-</ScrollView>
+          {localMeasurements.map((measurement) => (
+            <TouchableOpacity
+              key={measurement.id}
+              onPress={() => selectedMeasures.length > 0
+                ? toggleMeasureSelection(measurement.id)
+                : handleMeasurementPress(measurement)}
+              onLongPress={() => toggleMeasureSelection(measurement.id)}
+            >
+              <View style={[
+                styles.measurementCard,
+                selectedMeasures.includes(measurement.id) && styles.selectedCard
+              ]}>
+                <View style={styles.cardContent}>
+                  <View style={styles.measurementInfo}>
+                    <Text style={styles.measurementText}>
+                      {measurement.name}
+                    </Text>
+                    <Text style={styles.distanceText}>
+                      {measurement.distance} {measurement.units}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.checkboxContainer}
+                    onPress={() => toggleMeasureSelection(measurement.id)}
+                  >
+                    <MaterialIcons
+                      name={selectedMeasures.includes(measurement.id)
+                        ? "check-box"
+                        : "check-box-outline-blank"
+                      }
+                      size={width * 0.08}
+                      color="white"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       )}
-        <DeleteModal
-            visible={showDeleteModal}
-            onClose={() => setShowDeleteModal(false)}
-            onConfirm={handleConfirmDelete}
-            message={
-              selectedMeasures.length > 0 
-                ? "¿Estás seguro de que deseas borrar las mediciones seleccionadas?"
-                : "¿Estás seguro de que deseas borrar todas las mediciones?"
-            }
-        />
-        <MeasurementActionModal
-  visible={showActionModal}
-  onClose={() => setShowActionModal(false)}
-  measurement={selectedMeasurement}
-  onNameChange={handleNameChange}
-  onViewMeasurement={handleViewMeasurement}
-/>
+      <DeleteModal
+        visible={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleConfirmDelete}
+        message={
+          selectedMeasures.length > 0
+            ? "¿Estás seguro de que deseas borrar las mediciones seleccionadas?"
+            : "¿Estás seguro de que deseas borrar todas las mediciones?"
+        }
+      />
+      <MeasurementActionModal
+        visible={showActionModal}
+        onClose={() => setShowActionModal(false)}
+        measurement={selectedMeasurement}
+        onNameChange={handleNameChange}
+        onViewMeasurement={handleViewMeasurement}
+      />
     </View>
 
   );

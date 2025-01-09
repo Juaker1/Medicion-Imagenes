@@ -12,6 +12,8 @@ import MeasurementScreen from './screens/MeasurementScreen';
 import ImagePreviewScreen from './screens/ImagePreviewScreen';
 import CalibrationScreen from './screens/CalibrationScreen';
 import MeasurementHistoryScreen from './screens/ListScreen';
+import CalibrationExamplesScreen from './screens/CalibrationExamplesScreen';
+import { TutorialProvider } from './context/TutorialContext';
 import { colors } from './styles/globalStyles';
 
 const { width, height } = Dimensions.get('window');
@@ -61,6 +63,39 @@ function HomeStack() {
   );
 }
 
+function ExamplesStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="ExamplesMain"
+        component={CalibrationExamplesScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Measurement"
+        component={MeasurementScreen}
+        options={{
+          headerShown: false,
+          title: 'Medición',
+        }}
+      />
+      <Stack.Screen
+        name="MeasurementHistory"
+        component={MeasurementHistoryScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Calibration"
+        component={CalibrationScreen}
+        options={{
+          headerShown: false,
+          title: 'Calibración',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
 const HeaderTitle = ({ title }) => (
   <View style={styles.headerContainer}>
     <Text style={styles.headerText}>{title}</Text>
@@ -82,6 +117,7 @@ const Footer = () => (
 
 export default function App() {
   return (
+    <TutorialProvider>
     <NavigationContainer>
       <View style={{ flex: 1 }}>
         <Tab.Navigator
@@ -93,8 +129,8 @@ export default function App() {
                     ? 'home'
                     : 'home-outline'
                   : focused
-                  ? 'book'
-                  : 'book-outline';
+                    ? 'book'
+                    : 'book-outline';
               return <Ionicons name={iconName} size={size} color={color} />;
             },
             tabBarActiveTintColor: colors.mainBlue,
@@ -143,10 +179,33 @@ export default function App() {
               headerTitle: () => <HeaderTitle title="Tutorial" />,
             }}
           />
+          <Tab.Screen
+            name="Ejemplos"
+            component={ExamplesStack} // Cambiamos esto de CalibrationExamplesScreen a ExamplesStack
+            options={({ route }) => ({
+              headerTitle: () => {
+                const routeName = getFocusedRouteNameFromRoute(route);
+                let title;
+                switch (routeName) {
+                  case 'Measurement':
+                    title = 'Medición';
+                    break;
+                  default:
+                    title = 'Ejemplos de Calibración';
+                }
+                return <HeaderTitle title={title} />;
+              },
+              tabBarIcon: ({ focused, color, size }) => {
+                const iconName = focused ? 'images' : 'images-outline';
+                return <Ionicons name={iconName} size={size} color={color} />;
+              },
+            })}
+          />
         </Tab.Navigator>
         <Footer />
       </View>
     </NavigationContainer>
+    </TutorialProvider>
   );
 }
 
@@ -161,7 +220,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: 'white',
-    fontSize: width * 0.063, 
+    fontSize: width * 0.055,
     fontWeight: 'bold',
   },
   headerImage: {

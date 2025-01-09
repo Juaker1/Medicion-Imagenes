@@ -20,8 +20,8 @@ const ErrorModal = ({ visible, onClose, message }) => (
             <MaterialIcons name="error" size={width * 0.2} color="#d32f2f" />
             <Text style={styles.modalTitle}>Error</Text>
             <Text style={styles.modalMessage}>{message}</Text>
-            <TouchableOpacity 
-              style={styles.modalButton} 
+            <TouchableOpacity
+              style={styles.modalButton}
               onPress={onClose}
             >
               <Text style={styles.modalButtonText}>Aceptar</Text>
@@ -76,11 +76,11 @@ export default function CameraScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <CameraView 
+      <CameraView
         ref={cameraRef}
-        style={styles.camera} 
+        style={styles.camera}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.navigate('HomeScreen')}
         >
