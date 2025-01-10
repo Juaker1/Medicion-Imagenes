@@ -60,6 +60,11 @@ const HomeScreen = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         </View>
+        <View style={styles.footerContainer}>
+        <Text style={styles.footerText}>
+          Financiado por Proyecto de Innovación en Docencia (PID) UCT
+        </Text>
+      </View>
       </ScrollView>
     </View>
   );
@@ -114,6 +119,18 @@ const styles = StyleSheet.create({
   buttonText: {
     marginLeft: width * 0.02,
     fontSize: width * 0.045, // Scale text in buttons
+  },
+  footerContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 'auto',
+    paddingVertical: height * 0.02,
+  },
+  footerText: {
+    fontSize: width * 0.035,
+    color: colors.textGray,
+    fontStyle: 'italic',
+    textAlign: 'center',
   },
 });
 

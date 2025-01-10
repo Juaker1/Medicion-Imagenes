@@ -94,8 +94,9 @@ const TUTORIAL_STEPS = [
   {
     id: 11,
     title: 'Imágenes de Ejemplo',
-    description: '• En la pestaña de Ejemplos puedes ver imágenes de ejemplo para que puedas aprender a practicar.',
-    images: [require('../assets/ejemplos.png')]
+    description: '• En la pestaña de Ejemplos puedes ver imágenes de ejemplo para que puedas aprender y practicar a calibrar.',
+    images: [require('../assets/ejemplosBar.png'),
+      require('../assets/ejemplos.png')]
   }
 ];
 

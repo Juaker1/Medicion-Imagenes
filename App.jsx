@@ -106,13 +106,6 @@ const HeaderTitle = ({ title }) => (
   </View>
 );
 
-const Footer = () => (
-  <View style={styles.footerContainer}>
-    <Text style={styles.footerText}>
-      Financiado por Proyecto de Innovación en Docencia (PID) UCT 2023
-    </Text>
-  </View>
-);
 
 export default function App() {
   return (
@@ -200,7 +193,6 @@ export default function App() {
             })}
           />
         </Tab.Navigator>
-        <Footer />
       </View>
     </NavigationContainer>
   );
@@ -223,17 +215,6 @@ const styles = StyleSheet.create({
   headerImage: {
     width: width * 0.3, // Scaled based on width
     height: width * 0.3, // Keep aspect ratio
-  },
-  footerContainer: {
-    width: '100%',
-    alignItems: 'center',
-    backgroundColor: colors.mainBlue,
-    paddingVertical: height * 0.0035, // Dynamic vertical padding
-  },
-  footerText: {
-    fontSize: width * 0.025, // Scaled font size
-    color: colors.softWhite,
-    fontStyle: 'italic',
   },
   tabBarStyle: {
     backgroundColor: colors.softWhite,
