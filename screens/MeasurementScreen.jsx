@@ -19,7 +19,7 @@ import Animated, {
   withSequence,
 
 } from 'react-native-reanimated';
-import Svg, { Line } from 'react-native-svg';
+import Svg, { Line, Circle } from 'react-native-svg';
 
 const { width, height } = Dimensions.get('window');
 
@@ -93,6 +93,44 @@ const NameMeasurementModal = ({ visible, onClose, onSave }) => {
   );
 };
 
+const EditConfirmationModal = ({ visible, onClose, onConfirm, measurement }) => {
+  return (
+    <Modal
+      transparent
+      visible={visible}
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.modalOverlay}>
+          <TouchableWithoutFeedback>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Editar medición</Text>
+              <Text style={styles.modalMessage}>
+                ¿Deseas actualizar la medición "{measurement?.name}"?
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.cancelButton]}
+                  onPress={onClose}
+                >
+                  <Text style={styles.modalButtonText}>Cancelar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.editConfirmButton]}
+                  onPress={onConfirm}
+                >
+                  <Text style={styles.modalButtonText}>Actualizar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+};
+
 export default function MeasurementScreen({ route, navigation }) {
   const { imageUri } = route.params;
   const [points, setPoints] = useState([]);
@@ -102,6 +140,8 @@ export default function MeasurementScreen({ route, navigation }) {
   const [toastMessage, setToastMessage] = useState('');
   const [measurements, setMeasurements] = useState(route.params?.measurements || [])
   const [showNameModal, setShowNameModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
 
   const screenWidth = Dimensions.get('window').width;
@@ -124,6 +164,14 @@ export default function MeasurementScreen({ route, navigation }) {
       const { points: savedPoints, calibratedScale: savedScale } = route.params.existingMeasurement;
       setPoints(savedPoints);
       setCalibratedScale(savedScale);
+      setIsEditMode(true);
+
+      // Show edit mode instructions
+      setToastMessage("Para salir del modo edición, presiona el botón borrar");
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
     }
   }, [route.params?.existingMeasurement]);
 
@@ -166,25 +214,53 @@ export default function MeasurementScreen({ route, navigation }) {
   };
 
   const clearPoints = () => {
+    if (isEditMode) {
+      // Exit edit mode
+      setIsEditMode(false);
+    }
+    // Normal clear points behavior
     setPoints([]);
     setSelectedPoint(null);
-  };
 
+  };
 
 
   const handleImagePress = (event) => {
     const { locationX, locationY } = event.nativeEvent;
-
-    // Always use exact tap coordinates
+    const { width } = Dimensions.get('window');
+    const hitArea = width * 0.03;
+    
+    // First check if there are already 2 points and no point is selected
+    if (points.length === 2 && selectedPoint === null) {
+      setToastMessage("Solo puedes colocar dos puntos. Puedes editar o borrar los existentes");
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
+      return;
+    }
+    
+    // Rest of the existing code...
+    const isInsideExistingPoint = points.some((point, idx) => {
+      const distance = Math.sqrt(
+        Math.pow(locationX - point.x, 2) + 
+        Math.pow(locationY - point.y, 2)
+      );
+      return distance < hitArea;
+    });
+  
+    if (isInsideExistingPoint && selectedPoint === null) {
+      return;
+    }
+  
     const newPoint = {
       x: locationX,
       y: locationY
     };
-
+  
     if (selectedPoint !== null) {
       setPoints(prevPoints => {
         const newPoints = [...prevPoints];
-        // Direct assignment of new coordinates
         newPoints[selectedPoint] = newPoint;
         return newPoints;
       });
@@ -193,32 +269,7 @@ export default function MeasurementScreen({ route, navigation }) {
       setPoints(prevPoints => [...prevPoints, newPoint]);
     }
   };
-
   // Update renderPoints to ensure absolute positioning
-  const renderPoints = () => {
-    return points.map((point, index) => (
-      <View
-        key={index}
-        style={[
-          styles.pointContainer,
-          {
-            position: 'absolute',
-            left: point.x - 6, // Offset for centering
-            top: point.y - 6,  // Offset for centering
-            zIndex: selectedPoint === index ? 3 : 2, // Higher z-index for selected point
-          },
-        ]}
-      >
-        <View
-          style={[
-            styles.point,
-            { backgroundColor: selectedPoint === index ? 'yellow' : 'red' },
-          ]}
-        />
-        <View style={styles.pointCenter} />
-      </View>
-    ));
-  };
   const selectPoint = (index) => {
     setSelectedPoint(prevSelected => prevSelected === index ? null : index);
   };
@@ -279,33 +330,57 @@ export default function MeasurementScreen({ route, navigation }) {
       }, 2000);
       return;
     }
-    setShowNameModal(true);
+
+    if (isEditMode) {
+      setShowEditModal(true);
+    } else {
+      setShowNameModal(true);
+    }
   };
 
   // Add this function
   const handleSaveMeasurement = (name) => {
     const measurement = {
-      id: Date.now(),
+      id: isEditMode ? route.params.existingMeasurement.id : Date.now(),
       name: name || 'Medición sin nombre',
       distance: calculateRealDistance(),
       units: calibratedScale ? 'µm' : 'unidades',
       points: points,
       imageUri: imageUri,
-      calibratedScale: calibratedScale
+      calibratedScale: calibratedScale,
+      lastModified: new Date().toISOString(),
     };
 
-    const updatedMeasurements = [...measurements, measurement];
+    let updatedMeasurements;
+    if (isEditMode) {
+      // Update existing measurement
+      updatedMeasurements = measurements.map(m =>
+        m.id === measurement.id ? measurement : m
+      );
+      setToastMessage("Medición actualizada exitosamente");
+    } else {
+      // Add new measurement
+      updatedMeasurements = [...measurements, measurement];
+      setToastMessage("Medición guardada exitosamente");
+    }
+
     setMeasurements(updatedMeasurements);
     if (route.params?.setMeasurements) {
       route.params.setMeasurements(updatedMeasurements);
     }
+
     setShowNameModal(false);
-    setToastMessage("Medición guardada exitosamente");
+    setShowEditModal(false);
     setShowToast(true);
+
     setTimeout(() => {
       setShowToast(false);
     }, 2000);
   };
+
+  const pointOuterRadius = width * 0.023; // Radio del círculo exterior
+  const pointInnerRadius = width * 0.005; // Radio del punto central
+  const strokeWidth = width * 0.006; // Grosor de la línea
 
   return (
 
@@ -374,26 +449,49 @@ export default function MeasurementScreen({ route, navigation }) {
       <View style={styles.imageContainer}>
         <GestureDetector gesture={composedGesture}>
           <Animated.View style={animatedStyle}>
-            <TouchableOpacity onPress={handleImagePress} activeOpacity={1}>
-              <Image
-                source={{ uri: imageUri }}
-                style={styles.image}
-                resizeMode="contain"
-              />
-              {points.length === 2 && (
+            <TouchableWithoutFeedback onPress={handleImagePress}>
+              <View>
+                <Image
+                  source={{ uri: imageUri }}
+                  style={styles.image}
+                  resizeMode="contain"
+                />
                 <Svg style={StyleSheet.absoluteFill}>
-                  <Line
-                    x1={points[0].x}
-                    y1={points[0].y}
-                    x2={points[1].x}
-                    y2={points[1].y}
-                    stroke="white"
-                    strokeWidth="2"
-                  />
+                  {points.length === 2 && (
+                    <Line
+                      x1={points[0].x}
+                      y1={points[0].y}
+                      x2={points[1].x}
+                      y2={points[1].y}
+                      stroke="white"
+                      strokeWidth={strokeWidth}
+                    />
+                  )}
+                  
+                  {points.map((point, index) => (
+                    <React.Fragment key={index}>
+
+                      <Circle
+                        cx={point.x}
+                        cy={point.y}
+                        r={pointOuterRadius}
+                        fill={selectedPoint === index ? '#FFD700' : '#FF4444'}
+                        fillOpacity="0.3"
+                        stroke="white"
+                        strokeOpacity="0.3"
+                        strokeWidth={strokeWidth}
+                      />
+                      <Circle
+                        cx={point.x}
+                        cy={point.y}
+                        r={pointInnerRadius}
+                        fill="white"
+                      />
+                    </React.Fragment>
+                  ))}
                 </Svg>
-              )}
-              {renderPoints()}
-            </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
           </Animated.View>
         </GestureDetector>
       </View>
@@ -412,11 +510,17 @@ export default function MeasurementScreen({ route, navigation }) {
 
       <View style={styles.bottomContainer}>
         <TouchableOpacity
-          style={styles.saveButton}
+          style={[styles.saveButton, isEditMode && styles.editButton]}
           onPress={saveMeasurement}
         >
-          <MaterialIcons name="save" size={width * 0.05} color="white" />
-          <Text style={styles.bottomButtonText}>Guardar Medición</Text>
+          <MaterialIcons
+            name={isEditMode ? "edit" : "save"}
+            size={width * 0.05}
+            color="white"
+          />
+          <Text style={styles.bottomButtonText}>
+            {isEditMode ? 'Actualizar Medición' : 'Guardar Medición'}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -435,6 +539,16 @@ export default function MeasurementScreen({ route, navigation }) {
           visible={showNameModal}
           onClose={() => setShowNameModal(false)}
           onSave={handleSaveMeasurement}
+        />
+      </View>
+      <View>
+        <EditConfirmationModal
+          visible={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          onConfirm={() => {
+            handleSaveMeasurement(route.params.existingMeasurement.name);
+          }}
+          measurement={route.params?.existingMeasurement}
         />
       </View>
     </View>
@@ -528,29 +642,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  pointContainer: {
-    width: width * 0.03,
-    height: width * 0.026,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 2,
-  },
-  point: {
-    width: width * 0.03,
-    height: width * 0.03,
-    borderRadius: width * 0.02,
-    borderWidth: width * 0.003,
-    borderColor: 'white',
-    backgroundColor: 'red',
-    opacity: 0.4,
-  },
-  pointCenter: {
-    position: 'absolute',
-    width: width * 0.006,
-    height: width * 0.006,
-    backgroundColor: 'white',
-    borderRadius: width * 0.2,
-  },
+  
   toast: {
     position: 'absolute',
     top: height * 0.08,
@@ -581,6 +673,9 @@ const styles = StyleSheet.create({
     padding: width * 0.022,
     borderRadius: width * 0.02,
     gap: width * 0.01,
+  },
+  editButton: {
+    backgroundColor: '#FFA000', // Orange color for edit mode
   },
   historyButton: {
     flexDirection: 'row',
@@ -644,5 +739,15 @@ const styles = StyleSheet.create({
   modalButtonText: {
     fontSize: width * 0.04,
     color: 'white',
+  },
+  modalMessage: {
+    fontSize: width * 0.04,
+    textAlign: 'center',
+    marginBottom: height * 0.02,
+    color: '#666',
+    paddingHorizontal: width * 0.05,
+  },
+  editConfirmButton: {
+    backgroundColor: '#FFA000',
   },
 });

@@ -13,7 +13,6 @@ import ImagePreviewScreen from './screens/ImagePreviewScreen';
 import CalibrationScreen from './screens/CalibrationScreen';
 import MeasurementHistoryScreen from './screens/ListScreen';
 import CalibrationExamplesScreen from './screens/CalibrationExamplesScreen';
-import { TutorialProvider } from './context/TutorialContext';
 import { colors } from './styles/globalStyles';
 
 const { width, height } = Dimensions.get('window');
@@ -117,7 +116,6 @@ const Footer = () => (
 
 export default function App() {
   return (
-    <TutorialProvider>
     <NavigationContainer>
       <View style={{ flex: 1 }}>
         <Tab.Navigator
@@ -205,7 +203,6 @@ export default function App() {
         <Footer />
       </View>
     </NavigationContainer>
-    </TutorialProvider>
   );
 }
 
@@ -249,3 +246,4 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mainBlue,
   },
 });
+

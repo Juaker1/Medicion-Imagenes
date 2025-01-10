@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../styles/globalStyles';
@@ -24,7 +24,7 @@ const TUTORIAL_STEPS = [
   {
     id: 3,
     title: 'Calibración Automática',
-    description: 'Antes de medir, debes calibrar. Para calibrar, tienes que hacer una línea de medición. Con esta línea puedes elegir entre dos métodos de calibración. \nPara la calibración automática:\n\n• Haz una línea de medición que vaya desde cada borde del lente del microscopio, un diámetro del lente.\n• Luego, puedes elegir el método de calibración automática y seleccionar el aumento de tu microscopio.\n• Cuando hayas seleccionado el aumento, presiona el botón de confirmación.\n• La calibración se mantiene para que puedas hacer la medición que quieras en la imagen.',
+    description: 'Antes de medir, debes calibrar. Para calibrar, tienes que hacer una línea de medición. Con esta línea puedes elegir entre dos métodos de calibración. \nPara la calibración automática:\n\n• Haz una línea de medición que vaya desde cada borde del lente del microscopio, un diámetro del lente.\n• Luego, elige el método de calibración automática y selecciona primero el diametro del lente, luego de esto selecciona el aumento de tu microscopio.\n• Cuando hayas seleccionado el aumento, presiona el botón de confirmación.\n• La calibración se mantiene para que puedas hacer la medición que quieras en la imagen.',
     images: [
       require('../assets/lineaautomatica.png'),
       require('../assets/calibracionautomatica.png')
@@ -55,29 +55,67 @@ const TUTORIAL_STEPS = [
   {
     id: 7,
     title: 'Guardar Mediciones',
-    description: 'Si quieres hacer muchas mediciones, puedes guardarlas:\n\n• Primero haz una línea de medición.\n• Una vez hecha, presiona el botón "Guardar Medición" para guardar la medición.\n• Para ver tus mediciones guardadas, presiona el botón de "Ver Lista de Mediciones".',
-    images: [require('../assets/guardar.png')]
+    description: 'Si quieres hacer muchas mediciones, puedes guardarlas:\n\n• Primero haz una línea de medición.\n• Una vez hecha, presiona el botón "Guardar Medición".\n• Luego, ingresa un nombre para la medición y presiona el botón de "Guardar".\n• Para ver tus mediciones guardadas, presiona el botón de "Ver Lista de Mediciones".',
+    images: [require('../assets/lineas.png'),
+    require('../assets/nombrarMedicion.png'),
+    require('../assets/guardar.png')
+    ]
   },
   {
     id: 8,
     title: 'Lista de Mediciones',
-    description: 'En esta parte puedes ver todas tus mediciones guardadas:\n\n• Si te equivocaste en una medición, selecciónala y presiona el botón de "Borrar".\n• Puedes seleccionar varias mediciones para borrarlas.\n• Puedes borrar todas las mediciones si no tienes seleccionada ninguna con el botón de "Borrar Todas".',
+    description: 'En esta parte puedes ver todas tus mediciones guardadas:\n\n• Si te equivocaste en una medición, selecciónala apretando la caja a la derecha de la medición y presiona el botón de "Borrar".\n• Puedes seleccionar varias mediciones para borrarlas.\n• Si presionas el botón de "Borrar", se borrarán las mediciones seleccionadas.\n• Puedes borrar todas las mediciones si no tienes seleccionada ninguna con el botón de "Borrar Todas".',
     images: [require('../assets/Lista1.png'),
     require('../assets/Lista2.png'),
     require('../assets/Lista3.png'),
     require('../assets/Lista4.png')
     ]
+  },
+  {
+    id: 9,
+    title: 'Visualizar y Cambiar Nombre a Mediciones',
+    description: '• Puedes visualizar y editar tus mediciones:\n\n• Si seleccionas una medición, te aparecerá el nombre de la medición, un botón de "Cambiar Nombre" y un botón de "Ver Medición".\n• Puedes editar el nombre de la medición cambiando el nombre en el campo donde aparece y guardar los cambios presionando el botón "Cambiar Nombre" (Este botón no estará disponible hasta que cambies el nombre).\n• Cuando hayas cambiado el nombre, verás que el nombre de la medición cambió.\n• Si quieres visualizar donde hiciste las mediciones, presiona el botón de "Ver Medición".',
+    images: [require('../assets/opcionMedicion.png'),
+    require('../assets/cambiarNombre.png'),
+    require('../assets/nombreCambiado.png'),
+    ]
+  },
+  {
+    id: 10,
+    title: 'Editar Mediciones',
+    description: '• Cuando seleccionas el botón "Ver Medición" volverás a la pantalla de mediciones con la medición que guardaste.\n• Aquí puedes editar la medición por si quieres mover un punto y actualizar la distancia.\n• Para editar la medición, selecciona el punto que quieres mover y presiona en la posición deseada.\n• Cuando hayas terminado de editar la medición, presiona el botón de "Actualizar Medición".\n• Cuando hayas terminado la medición, puedes salir del "modo de edición" presionando el botón de "Borrar".',
+    images: [require('../assets/edicionAntes.png'),
+    require('../assets/edicionDespues.png'),
+    require('../assets/edicionGuardar.png'),
+    require('../assets/edicionMensaje.png'),
+
+    ]
+  },
+  {
+    id: 11,
+    title: 'Imágenes de Ejemplo',
+    description: '• En la pestaña de Ejemplos puedes ver imágenes de ejemplo para que puedas aprender a practicar.',
+    images: [require('../assets/ejemplos.png')]
   }
 ];
 
-const ImageCarousel = ({ images }) => {
+const ImageCarousel = ({ images, currentStep }) => {
   const [activeImage, setActiveImage] = useState(0);
+  const scrollViewRef = React.useRef(null);
+
+  useEffect(() => {
+    setActiveImage(0);
+    // Reset scroll position when tutorial step changes
+    scrollViewRef.current?.scrollTo({ x: 0, animated: false });
+  }, [currentStep]);
 
   if (!images || images.length === 0) return null;
+
 
   return (
     <View>
       <ScrollView
+        ref={scrollViewRef}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
@@ -148,7 +186,10 @@ export default function TutorialScreen() {
           {TUTORIAL_STEPS[currentStep].title}
         </Text>
 
-        <ImageCarousel images={TUTORIAL_STEPS[currentStep].images} />
+        <ImageCarousel
+          images={TUTORIAL_STEPS[currentStep].images}
+          currentStep={currentStep}
+        />
 
         <Text style={styles.description}>
           {TUTORIAL_STEPS[currentStep].description}
