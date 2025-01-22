@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Image, TouchableOpacity, StyleSheet, Text, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { globalStyles } from '../styles/globalStyles';
+import { getFontSize } from './components/responsiveFont';
 
 const { width, height } = Dimensions.get('window');
 
@@ -69,8 +70,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: width * 0.04,
-    fontWeight: '700',
+    fontSize: getFontSize(16),
+
   },
   retakeButton: {
     backgroundColor: '#d32f2f',

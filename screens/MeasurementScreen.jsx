@@ -20,28 +20,34 @@ import Animated, {
 
 } from 'react-native-reanimated';
 import Svg, { Line, Circle } from 'react-native-svg';
+import { getFontSize } from './components/responsiveFont';
 
 const { width, height } = Dimensions.get('window');
 
 const Toast = ({ message, isVisible }) => {
   const opacity = useSharedValue(0);
+  const zIndex = useSharedValue(0); // Start with low zIndex
 
   useEffect(() => {
     if (isVisible) {
-      opacity.value = withSequence(
-        withTiming(1, { duration: 300 }),
-        withTiming(1, { duration: 2000 }),
-        withTiming(0, { duration: 300 })
-      );
+      opacity.value = withTiming(1);
+      zIndex.value = 1000; // High when visible
+    } else {
+      opacity.value = withTiming(0);
+      zIndex.value = 0; // Low when hidden
     }
   }, [isVisible]);
 
   const toastStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
+    zIndex: zIndex.value,
   }));
 
   return (
-    <Animated.View style={[styles.toast, toastStyle]}>
+    <Animated.View
+      style={[styles.toast, toastStyle]}
+      pointerEvents={isVisible ? "auto" : "none"}
+    >
       <Text style={styles.toastText}>{message}</Text>
     </Animated.View>
   );
@@ -143,7 +149,6 @@ export default function MeasurementScreen({ route, navigation }) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
-
   const screenWidth = Dimensions.get('window').width;
   const screenHeight = Dimensions.get('window').height;
   const imageWidth = screenWidth;
@@ -210,6 +215,7 @@ export default function MeasurementScreen({ route, navigation }) {
     navigation.navigate('Calibration', {
       pixelDistance: calculatePixelDistance(),
       onCalibrationComplete: setCalibratedScale,
+      source: route.params?.source
     });
   };
 
@@ -229,7 +235,7 @@ export default function MeasurementScreen({ route, navigation }) {
     const { locationX, locationY } = event.nativeEvent;
     const { width } = Dimensions.get('window');
     const hitArea = width * 0.03;
-    
+
     // First check if there are already 2 points and no point is selected
     if (points.length === 2 && selectedPoint === null) {
       setToastMessage("Solo puedes colocar dos puntos. Puedes editar o borrar los existentes");
@@ -239,25 +245,25 @@ export default function MeasurementScreen({ route, navigation }) {
       }, 2000);
       return;
     }
-    
+
     // Rest of the existing code...
     const isInsideExistingPoint = points.some((point, idx) => {
       const distance = Math.sqrt(
-        Math.pow(locationX - point.x, 2) + 
+        Math.pow(locationX - point.x, 2) +
         Math.pow(locationY - point.y, 2)
       );
       return distance < hitArea;
     });
-  
+
     if (isInsideExistingPoint && selectedPoint === null) {
       return;
     }
-  
+
     const newPoint = {
       x: locationX,
       y: locationY
     };
-  
+
     if (selectedPoint !== null) {
       setPoints(prevPoints => {
         const newPoints = [...prevPoints];
@@ -357,7 +363,7 @@ export default function MeasurementScreen({ route, navigation }) {
       updatedMeasurements = measurements.map(m =>
         m.id === measurement.id ? measurement : m
       );
-      setToastMessage("Medición actualizada exitosamente");
+      setToastMessage("Medición actualizada exitosamente\nPara salir del modo edición, presiona el botón borrar");
     } else {
       // Add new measurement
       updatedMeasurements = [...measurements, measurement];
@@ -385,7 +391,6 @@ export default function MeasurementScreen({ route, navigation }) {
   return (
 
     <View style={styles.container}>
-
 
       <Toast
         message={toastMessage}
@@ -424,19 +429,11 @@ export default function MeasurementScreen({ route, navigation }) {
             onPress={clearPoints}
             disabled={points.length === 0}
           >
-            <MaterialIcons name="delete" size={width * 0.065} color="white" />
+            <MaterialIcons name="delete" size={width * 0.075} color="white" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.calibrationContainer}>
-          {calibratedScale && (
-            <TouchableOpacity
-              style={styles.resetCalibrationButton}
-              onPress={resetCalibration}
-            >
-              <MaterialIcons name="straighten" size={width * 0.065} color="white" />
-            </TouchableOpacity>
-          )}
           <TouchableOpacity
             style={styles.calibrateButton}
             onPress={handleCalibration}
@@ -447,6 +444,17 @@ export default function MeasurementScreen({ route, navigation }) {
       </View>
 
       <View style={styles.imageContainer}>
+        {calibratedScale && (
+
+          <TouchableOpacity
+            style={styles.resetCalibrationButton}
+            onPress={resetCalibration}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons name="straighten" size={width * 0.07} color="white" />
+          </TouchableOpacity>
+
+        )}
         <GestureDetector gesture={composedGesture}>
           <Animated.View style={animatedStyle}>
             <TouchableWithoutFeedback onPress={handleImagePress}>
@@ -467,7 +475,7 @@ export default function MeasurementScreen({ route, navigation }) {
                       strokeWidth={strokeWidth}
                     />
                   )}
-                  
+
                   {points.map((point, index) => (
                     <React.Fragment key={index}>
 
@@ -515,7 +523,7 @@ export default function MeasurementScreen({ route, navigation }) {
         >
           <MaterialIcons
             name={isEditMode ? "edit" : "save"}
-            size={width * 0.05}
+            size={width * 0.07}
             color="white"
           />
           <Text style={styles.bottomButtonText}>
@@ -527,10 +535,11 @@ export default function MeasurementScreen({ route, navigation }) {
           style={styles.historyButton}
           onPress={() => navigation.navigate('MeasurementHistory', {
             measurements: measurements,
-            setMeasurements: setMeasurements
+            setMeasurements: setMeasurements,
+            source: route.params?.source
           })}
         >
-          <MaterialIcons name="format-list-bulleted" size={width * 0.05} color="white" />
+          <MaterialIcons name="format-list-bulleted" size={width * 0.07} color="white" />
           <Text style={styles.bottomButtonText}>Ver Lista de Mediciones</Text>
         </TouchableOpacity>
       </View>
@@ -580,7 +589,7 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     backgroundColor: '#d32f2f',
-    padding: width * 0.018,
+    padding: width * 0.015,
     borderRadius: width * 0.02,
   },
   disabledButton: {
@@ -597,7 +606,7 @@ const styles = StyleSheet.create({
   },
   pointButtonText: {
     color: 'white',
-    fontSize: width * 0.04,
+    fontSize: getFontSize(15),
   },
   calibrationContainer: {
     flexDirection: 'row',
@@ -605,9 +614,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   resetCalibrationButton: {
+    position: 'absolute',
+    top: height * 0.005,
+    right: width * 0.02,
     backgroundColor: '#FFA000',
-    padding: width * 0.018,
     borderRadius: width * 0.02,
+    zIndex: 999,
+    width: width * 0.12,  // Ancho fijo
+    height: width * 0.12, // Alto fijo
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   calibrateButton: {
     backgroundColor: '#388e3c',
@@ -617,7 +633,7 @@ const styles = StyleSheet.create({
   },
   calibrateButtonText: {
     color: 'white',
-    fontSize: width * 0.04,
+    fontSize: getFontSize(15),
     textAlign: 'center',
   },
   infoContainer: {
@@ -631,18 +647,19 @@ const styles = StyleSheet.create({
   },
   infoText: {
     color: 'white',
-    fontSize: width * 0.035,
+    fontSize: getFontSize(13),
     marginVertical: height * 0.001,
   },
   imageContainer: {
     flex: 1,
     overflow: 'hidden',
+    zIndex: 1,
   },
   image: {
     width: '100%',
     height: '100%',
   },
-  
+
   toast: {
     position: 'absolute',
     top: height * 0.08,
@@ -651,12 +668,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
     padding: width * 0.03,
     borderRadius: width * 0.02,
-    zIndex: 1000,
     alignItems: 'center',
   },
   toastText: {
     color: 'white',
-    fontSize: width * 0.04,
+    fontSize: getFontSize(15),
     textAlign: 'center',
   },
   bottomContainer: {
@@ -687,7 +703,7 @@ const styles = StyleSheet.create({
   },
   bottomButtonText: {
     color: 'white',
-    fontSize: width * 0.035,
+    fontSize: getFontSize(12),
   },
   modalOverlay: {
     flex: 1,
@@ -703,7 +719,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalTitle: {
-    fontSize: width * 0.06,
+    fontSize: getFontSize(20),
     fontWeight: 'bold',
     marginBottom: height * 0.02,
     color: '#34568B',
@@ -715,7 +731,7 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.02,
     padding: width * 0.03,
     marginBottom: height * 0.02,
-    fontSize: width * 0.04,
+    fontSize: getFontSize(14),
   },
   modalButtons: {
     flexDirection: 'row',
@@ -737,11 +753,11 @@ const styles = StyleSheet.create({
     marginRight: width * 0.025,
   },
   modalButtonText: {
-    fontSize: width * 0.04,
+    fontSize: getFontSize(15),
     color: 'white',
   },
   modalMessage: {
-    fontSize: width * 0.04,
+    fontSize: getFontSize(14),
     textAlign: 'center',
     marginBottom: height * 0.02,
     color: '#666',

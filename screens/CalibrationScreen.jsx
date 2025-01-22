@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Dimensions, ScrollView } from 'react-native';
 import { globalStyles, colors } from '../styles/globalStyles';
 import { MaterialIcons } from '@expo/vector-icons';
+import { getFontSize } from './components/responsiveFont';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 const { width, height } = Dimensions.get('window');
 
@@ -172,7 +174,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: width * 0.06,
+    fontSize: getFontSize(22),
     fontWeight: 'bold',
     textAlign: 'center',
     color: colors.navy,
@@ -195,13 +197,13 @@ const styles = StyleSheet.create({
   methodText: {
     textAlign: 'center',
     color: 'white',
-    fontSize: width * 0.045,
+    fontSize: getFontSize(15),
   },
   manualInput: {
     marginVertical: height * 0.02,
   },
   label: {
-    fontSize: width * 0.045,
+    fontSize: getFontSize(17),
     marginBottom: height * 0.015,
   },
   input: {
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
     borderColor: colors.lightGray,
     borderRadius: width * 0.02,
     padding: width * 0.025,
-    fontSize: width * 0.045,
+    fontSize: getFontSize(16),
   },
   scalesContainer: {
     marginVertical: height * 0.02,
@@ -224,25 +226,24 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mainBlue,
   },
   scaleTitle: {
-    fontSize: width * 0.045,
+    fontSize: getFontSize(17),
     color: colors.navy,
     marginBottom: height * 0.015,
-    fontWeight: '500',
+
   },
   scaleText: {
     color: 'white',
-    fontSize: width * 0.045,
+    fontSize: getFontSize(16),
   },
   scaleValue: {
     color: 'white',
-    fontSize: width * 0.04,
+    fontSize: getFontSize(15),
     marginTop: height * 0.004,
   },
   diameterTitle: {
-    fontSize: width * 0.05,
+    fontSize: getFontSize(17),
     color: colors.navy,
     marginBottom: height * 0.015,
-    fontWeight: '500',
   },
   diameterContainer: {
     flexDirection: 'row',
@@ -261,8 +262,8 @@ const styles = StyleSheet.create({
   },
   diameterText: {
     color: 'white',
-    fontSize: width * 0.04,
-    fontWeight: '400',
+    fontSize: getFontSize(16),
+
   },
   confirmButton: {
     backgroundColor: colors.mainBlue,
@@ -276,6 +277,6 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     color: 'white',
     textAlign: 'center',
-    fontSize: width * 0.045,
+    fontSize: getFontSize(16),
   },
 });

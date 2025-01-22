@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TouchableWithoutFeedback, Dimensions, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { getFontSize } from './components/responsiveFont';
 
 const { width, height } = Dimensions.get('window');
 
@@ -153,7 +154,8 @@ export default function MeasurementHistoryScreen({ route, navigation }) {
       imageUri: selectedMeasurement.imageUri,
       existingMeasurement: selectedMeasurement,
       measurements: localMeasurements, // Pass current measurements
-      setMeasurements: route.params.setMeasurements // Pass the setter function
+      setMeasurements: route.params.setMeasurements, // Pass the setter function
+      source:route.params.source
     });
     setShowActionModal(false);
   };
@@ -311,13 +313,13 @@ const styles = StyleSheet.create({
   },
   measurementText: {
     color: 'white',
-    fontSize: width * 0.045,
+    fontSize: getFontSize(16),
     marginBottom: height * 0.003,
     fontWeight: 'bold',
   },
   distanceText: {
     color: '#cccccc',
-    fontSize: width * 0.04,
+    fontSize: getFontSize(15),
   },
 
   // Empty State Styles
@@ -328,7 +330,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: '#cccccc',
-    fontSize: width * 0.045,
+    fontSize: getFontSize(17),
   },
   // Delete Button Styles
   deleteContainer: {
@@ -341,7 +343,7 @@ const styles = StyleSheet.create({
   },
   deleteText: {
     color: 'white',
-    fontSize: width * 0.04,
+    fontSize: getFontSize(14),
     fontWeight: '700',
   },
   disabledButton: {
@@ -365,13 +367,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalTitle: {
-    fontSize: width * 0.07,
+    fontSize: getFontSize(20),
     fontWeight: 'bold',
     marginVertical: height * 0.01,
     color: '#34568B',
   },
   modalMessage: {
-    fontSize: width * 0.05,
+    fontSize: getFontSize(16),
     textAlign: 'center',
     marginBottom: height * 0.025,
     color: '#666',
@@ -390,7 +392,7 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     color: 'white',
-    fontSize: width * 0.05,
+    fontSize: getFontSize(15),
     fontWeight: '500',
   },
 
@@ -403,7 +405,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   actionModalTitle: {
-    fontSize: width * 0.06,
+    fontSize: getFontSize(23),
     fontWeight: 'bold',
     marginBottom: height * 0.02,
     color: '#34568B',
@@ -415,7 +417,7 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.02,
     padding: width * 0.03,
     marginBottom: height * 0.02,
-    fontSize: width * 0.04,
+    fontSize: getFontSize(15),
   },
   actionModalButtonsContainer: {
     width: '100%',
@@ -439,7 +441,7 @@ const styles = StyleSheet.create({
   },
   actionModalButtonText: {
     color: 'white',
-    fontSize: width * 0.04,
+    fontSize: getFontSize(15),
     fontWeight: '500',
     textAlign: 'center',
   },
@@ -462,7 +464,7 @@ const styles = StyleSheet.create({
   },
   editButton: {
     backgroundColor: '#FFA000',
-    marginRight: width * 0.025,
+    marginRight: width * 0.0,
   },
   viewButton: {
     backgroundColor: '#388e3c',

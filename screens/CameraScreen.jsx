@@ -3,6 +3,8 @@ import { View, TouchableOpacity, StyleSheet, Text, Modal, TouchableWithoutFeedba
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { MaterialIcons } from '@expo/vector-icons';
 import { globalStyles } from '../styles/globalStyles';
+import { getFontSize } from './components/responsiveFont';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 const { width, height } = Dimensions.get('window');
 
@@ -117,7 +119,7 @@ const styles = StyleSheet.create({
     color: 'white',
     marginTop: height * 0.03,
     marginBottom: height * 0.03,
-    fontSize: width * 0.05,
+    fontSize: getFontSize(16),
   },
   camera: {
     flex: 1,
@@ -150,7 +152,7 @@ const styles = StyleSheet.create({
   },
   captureText: {
     color: 'white',
-    fontSize: width * 0.04,
+    fontSize: getFontSize(15),
   },
   modalOverlay: {
     flex: 1,
@@ -166,13 +168,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalTitle: {
-    fontSize: width * 0.05,
+    fontSize: getFontSize(23),
     fontWeight: 'bold',
     marginVertical: height * 0.012,
     color: '#d32f2f',
   },
   modalMessage: {
-    fontSize: width * 0.04,
+    fontSize: getFontSize(15),
     textAlign: 'center',
     marginBottom: height * 0.025,
     color: '#666',
@@ -187,7 +189,7 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     color: 'white',
-    fontSize: width * 0.04,
+    fontSize: getFontSize(14),
     fontWeight: '500',
   },
 });

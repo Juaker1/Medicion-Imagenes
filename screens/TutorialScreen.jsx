@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../styles/globalStyles';
+import { getFontSize } from './components/responsiveFont';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 const { width, height } = Dimensions.get('window');
 
@@ -9,12 +11,14 @@ const TUTORIAL_STEPS = [
   {
     id: 1,
     title: 'Bienvenido',
-    description: 'Esta aplicación te permite realizar mediciones precisas en imágenes microscópicas. Sigue este tutorial para aprender cómo usarla. \n\n Primero selecciona una imagen o toma una foto del microscopio para comenzar. \n Asegúrate de que en la foto se vea todo el borde del lente como en la imagen.',
+    hasPreview: false,
+    description: 'Esta aplicación te permite realizar mediciones precisas en imágenes microscópicas. Sigue este tutorial para aprender cómo usarla. \n\nPrimero selecciona una imagen o toma una foto del microscopio para comenzar. \nAsegúrate de que en la foto se vea todo el borde del lente como en la imagen.',
     images: [require('../assets/sample.png')]
   },
   {
     id: 2,
     title: 'Colocación de Puntos',
+    hasPreview: false,
     description: 'Toca la pantalla para colocar puntos de medición:\n\n• Primer toque: Coloca el punto inicial\n• Segundo toque: Coloca el punto final\n• Botón "Punto 1": Modifica y reposiciona el punto 1\n• Botón "Punto 2": Modifica y reposiciona el punto 2\n• Botón "Borrar": Elimina ambos puntos\n• Puedes hacer zoom y mover la imagen para mayor precisión',
     images: [
       require('../assets/points.png'),
@@ -24,7 +28,9 @@ const TUTORIAL_STEPS = [
   {
     id: 3,
     title: 'Calibración Automática',
-    description: 'Antes de medir, debes calibrar. Para calibrar, tienes que hacer una línea de medición. Con esta línea puedes elegir entre dos métodos de calibración. \nPara la calibración automática:\n\n• Haz una línea de medición que vaya desde cada borde del lente del microscopio, un diámetro del lente.\n• Luego, elige el método de calibración automática y selecciona primero el diametro del lente, luego de esto selecciona el aumento de tu microscopio.\n• Cuando hayas seleccionado el aumento, presiona el botón de confirmación.\n• La calibración se mantiene para que puedas hacer la medición que quieras en la imagen.',
+    hasPreview: true,
+    preview: 'Puedes calibrar de dos formas. Para la calibración automática: \nUsando el diametro del lente, calibra apretando el botón "Calibrar" y luego seleccionando el diametro y aumento del lente.',
+    description: 'Para la calibración automática:\n\n• Haz una línea de medición que vaya desde cada borde del lente del microscopio, un diámetro del lente.\n• Luego, elige el método de calibración automática y selecciona primero el diametro del lente, luego de esto selecciona el aumento de tu microscopio.\n• Cuando hayas seleccionado el aumento, presiona el botón de confirmación.\n• La calibración se mantiene para que puedas hacer la medición que quieras en la imagen.',
     images: [
       require('../assets/lineaautomatica.png'),
       require('../assets/calibracionautomatica.png')
@@ -33,6 +39,8 @@ const TUTORIAL_STEPS = [
   {
     id: 4,
     title: 'Calibración Manual',
+    hasPreview: true,
+    preview: 'La calibración manual: \nUsando una distancia conocida, calibra apretando el botón "Calibrar" y luego ingresando la distancia.',
     description: 'Ahora para la medición manual:\n\n• Primero haz una línea de medición de una medición de la cual conozcas su distancia en la vida real.\n• Luego selecciona la calibración manual e ingresa esta distancia conocida.\n• Cuando hayas ingresado la distancia, presiona el botón de confirmación.\n• La calibración se mantiene para que puedas hacer la medición que quieras en la imagen.',
     images: [require('../assets/lineamanual.png'),
     require('../assets/calibracionmanual.png')
@@ -41,6 +49,7 @@ const TUTORIAL_STEPS = [
   {
     id: 5,
     title: 'Visualización de Medidas',
+    hasPreview: false,
     description: 'Las mediciones se muestran antes y después de la calibración:\n\n• La distancia aparece en la esquina inferior\n• Antes de calibrar, se muestra la distancia en unidades, y sin calibración\n• Luego de la calibración se muestra la distancia en (µm) junto con la escala de la imagen',
     images: [require('../assets/distanciasincalibrar.png'),
     require('../assets/distanciacalibrada.png')
@@ -49,13 +58,16 @@ const TUTORIAL_STEPS = [
   {
     id: 6,
     title: 'Eliminar Calibración',
-    description: 'Con este botón puedes reiniciar la calibración.',
+    hasPreview: false,
+    description: 'Con este botón puedes, que aparecera abajo a la izquierda luego de hacer una calibración, podras reiniciar la calibración.',
     images: [require('../assets/eliminarcalibracion.png')]
   },
   {
     id: 7,
     title: 'Guardar Mediciones',
-    description: 'Si quieres hacer muchas mediciones, puedes guardarlas:\n\n• Primero haz una línea de medición.\n• Una vez hecha, presiona el botón "Guardar Medición".\n• Luego, ingresa un nombre para la medición y presiona el botón de "Guardar".\n• Para ver tus mediciones guardadas, presiona el botón de "Ver Lista de Mediciones".',
+    hasPreview: true,
+    preview: 'Guarda tus mediciones con nombres personalizados para futuras referencias con el botón de "Guardar Medición".',
+    description: 'Para guardar tus mediciones:\n\n• Primero haz una línea de medición.\n• Una vez hecha, presiona el botón "Guardar Medición".\n• Luego, ingresa un nombre para la medición y presiona el botón de "Guardar".\n• Para ver tus mediciones guardadas, presiona el botón de "Ver Lista de Mediciones".',
     images: [require('../assets/lineas.png'),
     require('../assets/nombrarMedicion.png'),
     require('../assets/guardar.png')
@@ -64,6 +76,8 @@ const TUTORIAL_STEPS = [
   {
     id: 8,
     title: 'Lista de Mediciones',
+    hasPreview: true,
+    preview: 'Apretando el botón de "Ver Lista de Mediciones", puedes gestionar tus mediciones guardadas: visualiza, edita o elimina.',
     description: 'En esta parte puedes ver todas tus mediciones guardadas:\n\n• Si te equivocaste en una medición, selecciónala apretando la caja a la derecha de la medición y presiona el botón de "Borrar".\n• Puedes seleccionar varias mediciones para borrarlas.\n• Si presionas el botón de "Borrar", se borrarán las mediciones seleccionadas.\n• Puedes borrar todas las mediciones si no tienes seleccionada ninguna con el botón de "Borrar Todas".',
     images: [require('../assets/Lista1.png'),
     require('../assets/Lista2.png'),
@@ -74,6 +88,8 @@ const TUTORIAL_STEPS = [
   {
     id: 9,
     title: 'Visualizar y Cambiar Nombre a Mediciones',
+    hasPreview: true,
+    preview: 'En la lista de mediciones puedes editar nombres y revisar detalles de mediciones guardadas.',
     description: '• Puedes visualizar y editar tus mediciones:\n\n• Si seleccionas una medición, te aparecerá el nombre de la medición, un botón de "Cambiar Nombre" y un botón de "Ver Medición".\n• Puedes editar el nombre de la medición cambiando el nombre en el campo donde aparece y guardar los cambios presionando el botón "Cambiar Nombre" (Este botón no estará disponible hasta que cambies el nombre).\n• Cuando hayas cambiado el nombre, verás que el nombre de la medición cambió.\n• Si quieres visualizar donde hiciste las mediciones, presiona el botón de "Ver Medición".',
     images: [require('../assets/opcionMedicion.png'),
     require('../assets/cambiarNombre.png'),
@@ -83,6 +99,8 @@ const TUTORIAL_STEPS = [
   {
     id: 10,
     title: 'Editar Mediciones',
+    hasPreview: true,
+    preview: 'Luego de presionar el botón de "Ver Medición", puedes ver y ajustar tus mediciones guardadas.',
     description: '• Cuando seleccionas el botón "Ver Medición" volverás a la pantalla de mediciones con la medición que guardaste.\n• Aquí puedes editar la medición por si quieres mover un punto y actualizar la distancia.\n• Para editar la medición, selecciona el punto que quieres mover y presiona en la posición deseada.\n• Cuando hayas terminado de editar la medición, presiona el botón de "Actualizar Medición".\n• Cuando hayas terminado la medición, puedes salir del "modo de edición" presionando el botón de "Borrar".',
     images: [require('../assets/edicionAntes.png'),
     require('../assets/edicionDespues.png'),
@@ -94,9 +112,10 @@ const TUTORIAL_STEPS = [
   {
     id: 11,
     title: 'Imágenes de Ejemplo',
-    description: '• En la pestaña de Ejemplos puedes ver imágenes de ejemplo para que puedas aprender y practicar a calibrar.',
+    hasPreview: false,
+    description: 'En la pestaña de Ejemplos puedes ver imágenes de ejemplo para que puedas aprender y practicar a calibrar.',
     images: [require('../assets/ejemplosBar.png'),
-      require('../assets/ejemplos.png')]
+    require('../assets/ejemplos.png')]
   }
 ];
 
@@ -155,16 +174,19 @@ const ImageCarousel = ({ images, currentStep }) => {
 
 export default function TutorialScreen() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   const goToNextStep = () => {
     if (currentStep < TUTORIAL_STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
+      setShowFullDescription(false);
     }
   };
 
   const goToPreviousStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      setShowFullDescription(false);
     }
   };
 
@@ -193,8 +215,23 @@ export default function TutorialScreen() {
         />
 
         <Text style={styles.description}>
-          {TUTORIAL_STEPS[currentStep].description}
+          {TUTORIAL_STEPS[currentStep].hasPreview
+            ? (showFullDescription
+              ? TUTORIAL_STEPS[currentStep].description
+              : TUTORIAL_STEPS[currentStep].preview)
+            : TUTORIAL_STEPS[currentStep].description}
         </Text>
+
+        {TUTORIAL_STEPS[currentStep].hasPreview && (
+          <TouchableOpacity
+            style={styles.showMoreButton}
+            onPress={() => setShowFullDescription(!showFullDescription)}
+          >
+            <Text style={styles.showMoreText}>
+              {showFullDescription ? 'Ver menos' : 'Ver más'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
 
       <View style={styles.navigation}>
@@ -254,7 +291,7 @@ const styles = StyleSheet.create({
     height: width * 0.025,
   },
   stepTitle: {
-    fontSize: width * 0.08,
+    fontSize: getFontSize(30),
     fontWeight: 'bold',
     color: colors.navy,
     textAlign: 'center',
@@ -283,11 +320,22 @@ const styles = StyleSheet.create({
     height: width * 0.025,
   },
   description: {
-    fontSize: width * 0.043,
+    fontSize: getFontSize(16),
     color: colors.navy,
     lineHeight: width * 0.06,
-    textAlign: 'center',
+    textAlign: 'justify',
     marginTop: height * 0.01,
+  },
+  showMoreButton: {
+    alignSelf: 'center',
+    marginTop: height * 0.02,
+    padding: width * 0.03,
+    backgroundColor: colors.mainBlue,
+    borderRadius: width * 0.02,
+  },
+  showMoreText: {
+    color: 'white',
+    fontSize: getFontSize(14),
   },
   navigation: {
     flexDirection: 'row',
@@ -312,6 +360,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     marginHorizontal: width * 0.02,
-    fontSize: width * 0.045,
+    fontSize: getFontSize(14),
   },
 });

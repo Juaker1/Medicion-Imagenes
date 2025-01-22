@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { globalStyles, colors } from '../styles/globalStyles';
 import icon from '../assets/icon.png';
+import { getFontSize } from './components/responsiveFont';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 const { width, height } = Dimensions.get('window');
 
@@ -62,7 +64,7 @@ const HomeScreen = ({ navigation }) => {
         </View>
         <View style={styles.footerContainer}>
         <Text style={styles.footerText}>
-          Financiado por Proyecto de Innovación en Docencia (PID) UCT
+          Financiado por Proyecto de Innovación en Docencia. PID.
         </Text>
       </View>
       </ScrollView>
@@ -77,8 +79,8 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
-    alignItems: 'center',
-    paddingVertical: height * 0.02,
+
+    paddingVertical: height * 0.0,
   },
   welcomeContainer: {
     alignItems: 'center',
@@ -91,14 +93,14 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   welcomeTitle: {
-    fontSize: width * 0.1,
+    fontSize: getFontSize(35),
     fontWeight: 'bold',
     marginTop: height * 0.01,
     marginBottom: height * 0.025,
     textAlign: 'center',
   },
   welcomeDescription: {
-    fontSize: width * 0.045,
+    fontSize: getFontSize(17),
     color: colors.textGray,
     textAlign: 'center',
     marginBottom: height * 0.015,
@@ -118,7 +120,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     marginLeft: width * 0.02,
-    fontSize: width * 0.045, // Scale text in buttons
+    fontSize: getFontSize(17), // Scale text in buttons
   },
   footerContainer: {
     width: '100%',
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
     paddingVertical: height * 0.02,
   },
   footerText: {
-    fontSize: width * 0.035,
+    fontSize: getFontSize(13),
     color: colors.textGray,
     fontStyle: 'italic',
     textAlign: 'center',

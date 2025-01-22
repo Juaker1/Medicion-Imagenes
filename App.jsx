@@ -14,6 +14,8 @@ import CalibrationScreen from './screens/CalibrationScreen';
 import MeasurementHistoryScreen from './screens/ListScreen';
 import CalibrationExamplesScreen from './screens/CalibrationExamplesScreen';
 import { colors } from './styles/globalStyles';
+import { getFontSize } from './screens/components/responsiveFont';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 const { width, height } = Dimensions.get('window');
 const Tab = createBottomTabNavigator();
@@ -106,6 +108,11 @@ const HeaderTitle = ({ title }) => (
   </View>
 );
 
+
+Text.defaultProps = {
+  ...Text.defaultProps,
+  allowFontScaling: false,
+};
 
 export default function App() {
   return (
@@ -209,12 +216,12 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: 'white',
-    fontSize: width * 0.055,
+    fontSize: getFontSize(20),
     fontWeight: 'bold',
   },
   headerImage: {
     width: width * 0.3, // Scaled based on width
-    height: width * 0.3, // Keep aspect ratio
+    height: width * 0.1, // Keep aspect ratio
   },
   tabBarStyle: {
     backgroundColor: colors.softWhite,

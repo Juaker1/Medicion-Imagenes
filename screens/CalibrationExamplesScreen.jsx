@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { colors } from '../styles/globalStyles';
+import { getFontSize } from './components/responsiveFont';
 
 const { width, height } = Dimensions.get('window');
 
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
     },
     title: {
         color: colors.softWhite,
-        fontSize: width * 0.04,
+        fontSize: getFontSize(14),
         padding: width * 0.03,
         textAlign: 'center',
     }
