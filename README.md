@@ -162,9 +162,3 @@ MicroMeasure/
 | Navy | `#001F3F` | Textos principales |
 | Soft White | `#FAFAFA` | Fondo general |
 | Light Gray | `#B0BEC5` | Bordes, inactivos |
-
----
-
-## 📄 Licencia
-
-MIT License — © 2026 MicroMeasure
